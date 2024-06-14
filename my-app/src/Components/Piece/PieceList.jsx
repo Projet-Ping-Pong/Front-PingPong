@@ -12,22 +12,7 @@ function PieceList(props) {
   const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl))
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_URL}/piece/getAll`)
-      .then(response => response.json())
-      .then(data => {
-        if (data.erreur != null) {
-          // Erreur, phrase définie dans le back
-          // setInfoToast(data.erreur)
-          // new Toast(document.querySelector('.toast')).show()
-        } else {
-          setPieceResult(data)
-        }
-
-      })
-      .catch(error => {
-        console.log(error)
-        //   new Toast(document.querySelector('.toast')).show()
-      });
+    getAll();
   }, [])
 
   useEffect(() => {
@@ -58,6 +43,43 @@ function PieceList(props) {
     }
   }, [rechercheInput])
 
+  function getAll(){
+    fetch(`${process.env.REACT_APP_URL}/piece/getAll`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.erreur != null) {
+        // Erreur, phrase définie dans le back
+        // setInfoToast(data.erreur)
+        // new Toast(document.querySelector('.toast')).show()
+      } else {
+        setPieceResult(data)
+      }
+
+    })
+    .catch(error => {
+      console.log(error)
+      //   new Toast(document.querySelector('.toast')).show()
+    });
+  }
+
+  function deletePiece(id){
+    /////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////
+    // AJOUT D'UNE CONFIRMATION   + BUG TOOLTIP
+    /////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////
+    fetch(`${process.env.REACT_APP_URL}/piece/delete/${id}`,
+      {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      .then(response => response.json())
+      .then(() => {getAll();})
+      .catch(error => {
+        console.log(error)
+      });
+  }
+
   return (<>
     <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Liste des pièces</h1></div>
     <div className="d-flex flex-column align-items-center w-100" style={{ width: "85%", paddingTop: "50px" }}>
@@ -76,7 +98,7 @@ function PieceList(props) {
     </div>
     <div className='flex-grow-1 d-flex'>
       <div className="d-flex flex-column align-items-center w-100">
-        <div className="d-flex align-items-center bg-body-secondary list carte my-1 justify-content-between mb-3 border-bottom border-5" style={{ width: "85%", height: '5%' }}>
+        <div className="d-flex align-items-center bg-body-secondary list carte my-1 justify-content-between mb-3 border-bottom border-5" style={{ width: "85%", height: '13%' }}>
           <div className="mx-3 d-flex align-items-center w-75">
             <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>Ref</b></div>
             <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate"><b>Libellé</b></div>
@@ -89,7 +111,7 @@ function PieceList(props) {
         </div>
         {pieceResult.map((elem, index) => {
           return (<>
-            <div className="d-flex align-items-center bg-body-secondary list carte my-1 justify-content-between" style={{ width: "85%", height: '5%' }}>
+            <div className="d-flex align-items-center bg-body-secondary list carte my-1 justify-content-between" style={{ width: "85%", height: '15%' }}>
               <div className="mx-3 d-flex align-items-center w-75">
                 <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>{elem.id}</b></div>
                 <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.libelle}</div>
@@ -104,7 +126,7 @@ function PieceList(props) {
                   data-bs-title="Détails"><FontAwesomeIcon icon="fa-solid fa-magnifying-glass" style={{ color: "#ffffff", }} /></button>
                 <button className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
                   data-bs-title="Modifier"><FontAwesomeIcon icon="fa-solid fa-pen-to-square" style={{ color: "#ffffff", }} /></button>
-                <button className="btn border border-2 mx-1 button bg-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                <button onClick={()=>{deletePiece(elem.id)}} className="btn border border-2 mx-1 button bg-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
                   data-bs-title="Supprimer"><FontAwesomeIcon icon="fa-solid fa-trash" style={{ color: "#ffffff", }} /></button>
               </div>
             </div></>)

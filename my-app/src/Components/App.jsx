@@ -6,9 +6,11 @@ import NavBar from './NavBar';
 import Footer from './Footer';
 import PieceList from './Piece/PieceList';
 import PieceAjout from './Piece/PieceAjout';
+import { useEffect } from 'react';
 
 
 function App() {
+
   return (
     <>
       {!localStorage.getItem("Token") ? <Login></Login> :
