@@ -3,12 +3,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import logo from '../Assets/logo.jpg';
 import { useState } from 'react';
 import Toast from 'bootstrap/js/dist/toast';
+import ToastAff from './Toast';
 
 function Login() {
 
   const [nom_utiInput, setNom_utiInput] = useState('')
   const [mdpInput, setMdpInput] = useState('')
+
   const [infoToast, setInfoToast] = useState('')
+  const [statutToast, setStatutToast] = useState('')
 
   const logIn = () => {
     if (nom_utiInput !== "" && mdpInput !== "") {
@@ -27,6 +30,7 @@ function Login() {
           if (data.erreur != null) {
             // Erreur, phrase définie dans le back
             setInfoToast(data.erreur)
+            setStatutToast('error')
             new Toast(document.querySelector('.toast')).show()
           } else {
             localStorage.setItem("Token", data.token)
@@ -34,32 +38,29 @@ function Login() {
             window.location.href = '/accueil';
             // Success, Vous êtes bien connecté(e)
             setInfoToast("Vous êtes bien connecté(e)")
+            setStatutToast('success')
+            localStorage.setItem("Toast","success")
             new Toast(document.querySelector('.toast')).show()
           }
 
         })
         .catch(error => {
           console.log(error)
+          setInfoToast(error)
+          setStatutToast('error')
           new Toast(document.querySelector('.toast')).show()
         });
     } else {
       // Erreur, Veuillez renseigner le nom d'utilisateur et le mot de passe
       setInfoToast("Veuillez renseigner le nom d'utilisateur et le mot de passe")
+      setStatutToast('error')
       new Toast(document.querySelector('.toast')).show()
     }
 
   }
 
   return (<>
-    <div className="toast-container position-fixed top-0 end-0 p-3">
-      <div id="liveToast" className="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div className="alert alert-danger m-0" role="alert">
-          <div className="w-100 d-flex justify-content-end"><button type="button" className="btn-close top-0 end-0" data-bs-dismiss="toast" aria-label="Close"></button></div>
-          <p>{infoToast}</p>
-        </div>
-      </div>
-    </div>
-
+    <ToastAff infoToast={infoToast} statutToast={statutToast}></ToastAff>
     <form className="text-body d-flex justify-content-evenly align-items-center" style={{ width: "100%", height: "100%" }}>
       <div className="w-25">
         <div className='d-flex justify-content-center pt-4'><img className="img-rectangle rounded-circle aff-up-img" style={{ minWidth: "300px", minHeight: "300px" }} src={logo} alt="Logo"></img></div>
