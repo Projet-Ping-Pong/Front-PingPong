@@ -6,7 +6,7 @@ import Toast from 'bootstrap/js/dist/toast';
 import ToastAff from '../Toast';
 import Recherche from '../Vrac/Recherche';
 
-function MachineList(props) {
+function OperationList(props) {
 
     const [rechercheResult, setRechercheResult] = useState([{}])
     const [rechercheInput, setRechercheInput] = useState("")
@@ -24,7 +24,7 @@ function MachineList(props) {
     useEffect(() => {
         if (localStorage.getItem("Toast") === "success") {
             localStorage.setItem("Toast", "")
-            setInfoToast("Machine crée avec succès")
+            setInfoToast("Opération crée avec succès")
             setStatutToast('success')
             new Toast(document.querySelector('.toast')).show()
         }
@@ -32,7 +32,7 @@ function MachineList(props) {
 
     useEffect(() => {
         if (rechercheInput !== "" || rechercheInput !== null) {
-            fetch(`${process.env.REACT_APP_URL}/machine/rechLibelle`,
+            fetch(`${process.env.REACT_APP_URL}/operation/rechLibelle`,
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -61,7 +61,7 @@ function MachineList(props) {
     }, [rechercheInput])
 
     function getAll() {
-        fetch(`${process.env.REACT_APP_URL}/machine/getAll`)
+        fetch(`${process.env.REACT_APP_URL}/operation/getAll`)
             .then(response => response.json())
             .then(data => {
                 if (data.erreur != null) {
@@ -82,8 +82,8 @@ function MachineList(props) {
     }
 
     function deleteElem(id) {
-        if (window.confirm("Voulez-vous supprimer la machine avec l'id : " + id)) {
-            fetch(`${process.env.REACT_APP_URL}/machine/delete/${id}`,
+        if (window.confirm("Voulez-vous supprimer l'opération avec l'id : " + id)) {
+            fetch(`${process.env.REACT_APP_URL}/operation/delete/${id}`,
                 {
                     method: 'DELETE',
                     headers: { 'Content-Type': 'application/json' },
@@ -91,7 +91,7 @@ function MachineList(props) {
                 .then(response => response.json())
                 .then(() => {
                     getAll()
-                    setInfoToast("Machine supprimée avec succès")
+                    setInfoToast("Opération supprimée avec succès")
                     setStatutToast('success')
                     new Toast(document.querySelector('.toast')).show()
                 })
@@ -104,7 +104,7 @@ function MachineList(props) {
     }
 
     const recherche = (rechercheLib) => {
-        fetch(`${process.env.REACT_APP_URL}/machine/rechLibelle`,
+        fetch(`${process.env.REACT_APP_URL}/operation/rechLibelle`,
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -133,8 +133,8 @@ function MachineList(props) {
 
     return (<>
         <ToastAff infoToast={infoToast} statutToast={statutToast}></ToastAff>
-        <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Liste des Machines</h1></div>
-        <Recherche recherche={(rechercheLib) => recherche(rechercheLib)} prov="machine"></Recherche>
+        <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Liste des Opérations</h1></div>
+        <Recherche recherche={(rechercheLib) => recherche(rechercheLib)} prov="operation"></Recherche>
         <div className='flex-grow-1 d-flex'>
             <div className="d-flex flex-column align-items-center w-100">
                 <div className="d-flex align-items-center bg-body-secondary list carte my-1 justify-content-between mb-3 border-bottom border-5" style={{ width: "85%", height: '13%' }}>
@@ -152,9 +152,9 @@ function MachineList(props) {
                             </div>
 
                             <div className="mx-3 w-25 d-flex justify-content-end">
-                                <button onClick={() => { window.location.href = `/machinesCRUD?id=${elem.id}`; sessionStorage.setItem("Provenance", "details") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                <button onClick={() => { window.location.href = `/operationsCRUD?id=${elem.id}`; sessionStorage.setItem("Provenance", "details") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
                                     data-bs-title="Détails"><FontAwesomeIcon icon="fa-solid fa-magnifying-glass" style={{ color: "#ffffff", }} /></button>
-                                <button onClick={() => { window.location.href = `/machinesCRUD?id=${elem.id}`; sessionStorage.setItem("Provenance", "update") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                <button onClick={() => { window.location.href = `/operationsCRUD?id=${elem.id}`; sessionStorage.setItem("Provenance", "update") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
                                     data-bs-title="Modifier"><FontAwesomeIcon icon="fa-solid fa-pen-to-square" style={{ color: "#ffffff", }} /></button>
                                 <button onClick={() => { deleteElem(elem.id) }} className="btn border border-2 mx-1 button bg-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
                                     data-bs-title="Supprimer"><FontAwesomeIcon icon="fa-solid fa-trash" style={{ color: "#ffffff", }} /></button>
@@ -168,4 +168,4 @@ function MachineList(props) {
     );
 }
 
-export default MachineList;
+export default OperationList;

@@ -228,3 +228,15 @@
 .carte:nth-child(21) {
   animation-delay: 2.1s;
 }
+
+
+
+.rechercheListe{
+  width: 85%;
+  height: 15%;
+  cursor: pointer;
+}
+
+.rechercheListe:hover{
+  background-color: rgb(240, 240, 240);
+}

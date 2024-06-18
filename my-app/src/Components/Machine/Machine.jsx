@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import '../../Style/App.css';
 import { useEffect, useState } from 'react';
 import Toast from 'bootstrap/js/dist/toast';
+import ToastAff from '../Toast';
 
 function Machine(props) {
 
@@ -44,10 +45,10 @@ function Machine(props) {
                     console.log(error)
                 });
         }
-        if (provenance === "details"){
+        if (provenance === "details") {
             setIsDetails(true)
         }
-    },[])
+    }, [])
 
     function add() {
         fetch(`${process.env.REACT_APP_URL}/machine/add`,
@@ -108,30 +109,25 @@ function Machine(props) {
     }
 
     return (<>
-        <div className="toast-container position-fixed top-0 end-0 p-3">
-            <div id="liveToast" className="toast" role="alert" aria-live="assertive" aria-atomic="true">
-                <div className="alert alert-danger m-0" role="alert">
-                    <div className="w-100 d-flex justify-content-end"><button type="button" className="btn-close top-0 end-0" data-bs-dismiss="toast" aria-label="Close"></button></div>
-                    <p>{infoToast}</p>
-                </div>
-            </div>
-        </div>
+        <ToastAff infoToast={infoToast} statutToast={statutToast}></ToastAff>
         {provenance === "add" ? <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Ajout des machines</h1></div> : ""}
         {provenance === "update" ? <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Modification des machines</h1></div> : ""}
         {provenance === "details" ? <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Détails des machines</h1></div> : ""}
 
         <div className="d-flex flex-column align-items-center w-100" style={{ width: "85%", paddingTop: "50px" }}>
             <div className="d-flex flex-wrap bg-body-secondary list carte" style={{ width: "85%", height: '5%' }}>
-                <div className="mx-3 d-flex align-items-center justify-content-between w-100">
-                    <input type="text" className="form-control w-100" placeholder={'Libellé'} value={libelle} onChange={(event) => { setLibelle(event.target.value) }} disabled={isDetails}></input>
-                </div>
+                <form class="mx-3 d-flex align-items-center justify-content-between w-100 form-floating">
+                    <input type="text" className="form-control w-100" id="floatingInputLibelle" placeholder={'Libellé'} value={libelle} onChange={(event) => { setLibelle(event.target.value) }} disabled={isDetails}></input>
+                    <label for="floatingInputLibelle">Libellé</label>
+                </form>
             </div>
         </div>
         <div className="d-flex flex-column align-items-center w-100" style={{ width: "85%", paddingTop: "50px" }}>
             <div className="d-flex flex-wrap bg-body-secondary list carte" style={{ width: "85%", height: '5%' }}>
-                <div className="mx-3 d-flex align-items-center justify-content-between w-100">
-                    <textarea type="textarea" rows="5" className="form-control w-100" placeholder={'Description'} value={description} onChange={(event) => { setDescription(event.target.value) }} disabled={isDetails}></textarea>
-                </div>
+                <form class="mx-3 d-flex align-items-center justify-content-between w-100 form-floating">
+                    <textarea type="textarea" rows="5" id="floatingInputDescription" className="form-control w-100" placeholder={'Description'} value={description} onChange={(event) => { setDescription(event.target.value) }} disabled={isDetails}></textarea>
+                    <label for="floatingInputDescription">Description</label>
+                </form>
             </div>
         </div>
 

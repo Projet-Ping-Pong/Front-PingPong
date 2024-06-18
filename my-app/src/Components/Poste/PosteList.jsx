@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Tooltip from 'bootstrap/js/dist/tooltip';
 import Toast from 'bootstrap/js/dist/toast';
 import ToastAff from '../Toast';
+import Recherche from '../Vrac/Recherche';
 
 function PosteList(props) {
 
@@ -96,23 +97,36 @@ function PosteList(props) {
         }
     }
 
+    const recherche = (rechercheLib) => {
+        fetch(`${process.env.REACT_APP_URL}/poste/rechLibelle`,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    libelle: rechercheLib,
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.erreur != null) {
+                    // Erreur, phrase définie dans le back
+                    setInfoToast(data.erreur)
+                    setStatutToast('error')
+                    new Toast(document.querySelector('.toast')).show()
+                } else {
+                    setRechercheResult(data)
+                }
+
+            })
+            .catch(error => {
+                console.log(error)
+            });
+    }
+
     return (<>
         <ToastAff infoToast={infoToast} statutToast={statutToast}></ToastAff>
         <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Liste des Postes</h1></div>
-        <div className="d-flex flex-column align-items-center w-100" style={{ width: "85%", paddingTop: "50px" }}>
-
-            <div className="d-flex align-items-center my-1 justify-content-between mb-3" style={{ width: "85%", height: '5%' }}>
-                <div className="input-group w-50 anim">
-                    <input type="text" className="form-control w-25" placeholder={'Rechercher'} value={rechercheInput} onChange={(event) => { setRechercheInput(event.target.value) }}></input>
-                    <span className="input-group-text" id="basic-addon1"><button className="btn" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                        data-bs-title="Rechercher"><FontAwesomeIcon icon="fa-solid fa-magnifying-glass" /></button></span>
-                </div>
-
-                <div className="mx-3 w-25 d-flex justify-content-end anim">
-                    <button className="btn border border-2 px-4 button bg-primary" type="button" style={{ color: "#ffffff", }} onClick={() => { window.location.href = 'postesCRUD'; sessionStorage.setItem("Provenance", "add") }}><FontAwesomeIcon icon="fa-solid fa-plus" />&nbsp;&nbsp; Ajout</button>
-                </div>
-            </div>
-        </div>
+        <Recherche recherche={(rechercheLib)=>recherche(rechercheLib)} prov="poste"></Recherche>
         <div className='flex-grow-1 d-flex'>
             <div className="d-flex flex-column align-items-center w-100">
                 <div className="d-flex align-items-center bg-body-secondary list carte my-1 justify-content-between mb-3 border-bottom border-5" style={{ width: "85%", height: '13%' }}>
