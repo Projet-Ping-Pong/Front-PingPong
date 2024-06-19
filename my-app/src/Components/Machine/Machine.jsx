@@ -24,7 +24,7 @@ function Machine(props) {
             fetch(`${process.env.REACT_APP_URL}/machine/getId`,
                 {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
                     body: JSON.stringify({
                         id: IdFromURL,
                     })
@@ -54,7 +54,7 @@ function Machine(props) {
         fetch(`${process.env.REACT_APP_URL}/machine/add`,
             {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
                 body: JSON.stringify({
                     libelle: libelle,
                     description: description
@@ -84,7 +84,7 @@ function Machine(props) {
         fetch(`${process.env.REACT_APP_URL}/machine/update/${id}`,
             {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
                 body: JSON.stringify({
                     libelle: libelle,
                     description: description

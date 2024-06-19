@@ -6,11 +6,15 @@ import NavBar from './NavBar';
 import Footer from './Footer';
 import PieceList from './Piece/PieceList';
 import MachineList from './Machine/MachineList';
-import PieceAjout from './Piece/PieceAjout';
+import Piece from './Piece/Piece';
 import { useEffect } from 'react';
 import Machine from './Machine/Machine';
 import PosteList from './Poste/PosteList';
 import Poste from './Poste/Poste';
+import OperationList from './Operation/OperationList';
+import Operation from './Operation/Operation';
+import GammeList from './Gamme/GammeList';
+import Gamme from './Gamme/Gamme';
 
 
 function App() {
@@ -24,11 +28,15 @@ function App() {
               <Routes>
                 <Route path="/accueil" element={<Accueil />} />
                 <Route path="/pieces" element={<PieceList />} />
-                <Route path="/piecesAjout" element={<PieceAjout />} />
+                <Route path="/piecesCRUD" element={<Piece />} />
                 <Route path="/machines" element={<MachineList />} />
                 <Route path="/machinesCRUD" element={<Machine />} />
                 <Route path="/postes" element={<PosteList />} />
                 <Route path="/postesCRUD" element={<Poste />} />
+                <Route path="/operations" element={<OperationList />} />
+                <Route path="/operationsCRUD" element={<Operation />} />
+                <Route path="/gammes" element={<GammeList />} />
+                <Route path="/gammesCRUD" element={<Gamme />} />
               </Routes>
             </BrowserRouter>
           <Footer />

@@ -5,6 +5,7 @@ import Tooltip from 'bootstrap/js/dist/tooltip';
 import Toast from 'bootstrap/js/dist/toast';
 import ToastAff from '../Toast';
 import Recherche from '../Vrac/Recherche';
+import Liste from '../Vrac/liste';
 
 function OperationList(props) {
 
@@ -24,7 +25,7 @@ function OperationList(props) {
     useEffect(() => {
         if (localStorage.getItem("Toast") === "success") {
             localStorage.setItem("Toast", "")
-            setInfoToast("Opération crée avec succès")
+            setInfoToast("Opération créée avec succès")
             setStatutToast('success')
             new Toast(document.querySelector('.toast')).show()
         }
@@ -35,7 +36,7 @@ function OperationList(props) {
             fetch(`${process.env.REACT_APP_URL}/operation/rechLibelle`,
                 {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
                     body: JSON.stringify({
                         libelle: rechercheInput,
                     })
@@ -61,7 +62,11 @@ function OperationList(props) {
     }, [rechercheInput])
 
     function getAll() {
-        fetch(`${process.env.REACT_APP_URL}/operation/getAll`)
+        fetch(`${process.env.REACT_APP_URL}/operation/getAll`,
+            {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
+            })
             .then(response => response.json())
             .then(data => {
                 if (data.erreur != null) {
@@ -72,7 +77,6 @@ function OperationList(props) {
                 } else {
                     setRechercheResult(data)
                 }
-
             })
             .catch(error => {
                 setInfoToast(error)
@@ -86,7 +90,7 @@ function OperationList(props) {
             fetch(`${process.env.REACT_APP_URL}/operation/delete/${id}`,
                 {
                     method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
                 })
                 .then(response => response.json())
                 .then(() => {
@@ -107,7 +111,7 @@ function OperationList(props) {
         fetch(`${process.env.REACT_APP_URL}/operation/rechLibelle`,
             {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
                 body: JSON.stringify({
                     libelle: rechercheLib,
                 })
@@ -135,35 +139,7 @@ function OperationList(props) {
         <ToastAff infoToast={infoToast} statutToast={statutToast}></ToastAff>
         <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Liste des Opérations</h1></div>
         <Recherche recherche={(rechercheLib) => recherche(rechercheLib)} prov="operation"></Recherche>
-        <div className='flex-grow-1 d-flex'>
-            <div className="d-flex flex-column align-items-center w-100">
-                <div className="d-flex align-items-center bg-body-secondary list carte my-1 justify-content-between mb-3 border-bottom border-5" style={{ width: "85%", height: '13%' }}>
-                    <div className="mx-3 d-flex align-items-center w-75">
-                        <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>ID</b></div>
-                        <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate"><b>Libellé</b></div>
-                    </div>
-                </div>
-                {rechercheResult.map((elem, index) => {
-                    return (<>
-                        <div className="d-flex align-items-center bg-body-secondary list carte my-1 justify-content-between" style={{ width: "85%", height: '15%' }}>
-                            <div className="mx-3 d-flex align-items-center w-75">
-                                <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>{elem.id}</b></div>
-                                <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.libelle}</div>
-                            </div>
-
-                            <div className="mx-3 w-25 d-flex justify-content-end">
-                                <button onClick={() => { window.location.href = `/operationsCRUD?id=${elem.id}`; sessionStorage.setItem("Provenance", "details") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                                    data-bs-title="Détails"><FontAwesomeIcon icon="fa-solid fa-magnifying-glass" style={{ color: "#ffffff", }} /></button>
-                                <button onClick={() => { window.location.href = `/operationsCRUD?id=${elem.id}`; sessionStorage.setItem("Provenance", "update") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                                    data-bs-title="Modifier"><FontAwesomeIcon icon="fa-solid fa-pen-to-square" style={{ color: "#ffffff", }} /></button>
-                                <button onClick={() => { deleteElem(elem.id) }} className="btn border border-2 mx-1 button bg-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                                    data-bs-title="Supprimer"><FontAwesomeIcon icon="fa-solid fa-trash" style={{ color: "#ffffff", }} /></button>
-                            </div>
-                        </div></>)
-                })}
-
-            </div>
-        </div>
+        <Liste rechercheResult={rechercheResult} deleteElem={(id) => deleteElem(id)} prov="operation"></Liste>
     </>
     );
 }

@@ -2,6 +2,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import '../../Style/App.css';
 import { useEffect, useState } from 'react';
 import Toast from 'bootstrap/js/dist/toast';
+import ToastAff from '../Toast';
+import { debounce } from 'lodash';
 
 function Poste(props) {
 
@@ -14,7 +16,7 @@ function Poste(props) {
     const [infoToast, setInfoToast] = useState("")
     const [statutToast, setStatutToast] = useState("")
 
-    
+
     const [isDetails, setIsDetails] = useState(false)
 
     const [rechercheResult, setRechercheResult] = useState([])
@@ -31,7 +33,7 @@ function Poste(props) {
             fetch(`${process.env.REACT_APP_URL}/poste/getId`,
                 {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
                     body: JSON.stringify({
                         id: IdFromURL,
                     })
@@ -59,11 +61,11 @@ function Poste(props) {
     }, [])
 
     const recherche = (rechercheLib) => {
-        if(rechercheLib !== ""){
+        if (rechercheLib !== "") {
             fetch(`${process.env.REACT_APP_URL}/machine/rechLibelle`,
                 {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
                     body: JSON.stringify({
                         libelle: rechercheLib,
                     })
@@ -78,28 +80,28 @@ function Poste(props) {
                     } else {
                         setRechercheResult(data)
                     }
-    
+
                 })
                 .catch(error => {
                     setInfoToast(error)
                     setStatutToast('error')
                     new Toast(document.querySelector('.toast')).show()
                 });
-        }else{
+        } else {
             setRechercheResult([])
         }
     }
 
     function add() {
-        if(libelle === "" || libelle === null){
+        if (libelle === "" || libelle === null) {
             setInfoToast("Le libellé est vide")
             setStatutToast('error')
             new Toast(document.querySelector('.toast')).show()
-        }else{
+        } else {
             fetch(`${process.env.REACT_APP_URL}/poste/add`,
                 {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
                     body: JSON.stringify({
                         libelle: libelle,
                         description: description,
@@ -124,7 +126,7 @@ function Poste(props) {
                     setStatutToast('error')
                     new Toast(document.querySelector('.toast')).show()
                 });
-            
+
         }
     }
 
@@ -132,7 +134,7 @@ function Poste(props) {
         fetch(`${process.env.REACT_APP_URL}/poste/update/${id}`,
             {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
                 body: JSON.stringify({
                     libelle: libelle,
                     description: description,
@@ -157,36 +159,29 @@ function Poste(props) {
             });
     }
 
-    function addListe(id, libelle){
-        if(rechercheResult2.find((rechercheResult2) => rechercheResult2.id === id) === undefined){
-            const tab = [...rechercheResult2,{
+    function addListe(id, libelle) {
+        if (rechercheResult2.find((rechercheResult2) => rechercheResult2.id === id) === undefined) {
+            const tab = [...rechercheResult2, {
                 id: id,
-                libelle : libelle
+                libelle: libelle
             }]
             setRechercheResult2(tab)
             setRechercheResult([])
-        }else{
+        } else {
             setInfoToast("Machine déjà présente dans la liste des machines adaptées au poste")
             setStatutToast('success')
             new Toast(document.querySelector('.toast')).show()
         }
     }
 
-    function deleteList(id){
+    function deleteList(id) {
         const tab = [...rechercheResult2]
-        tab.splice(id,1)
+        tab.splice(id, 1)
         setRechercheResult2(tab)
     }
 
     return (<>
-        <div className="toast-container position-fixed top-0 end-0 p-3">
-            <div id="liveToast" className="toast" role="alert" aria-live="assertive" aria-atomic="true">
-                <div className="alert alert-danger m-0" role="alert">
-                    <div className="w-100 d-flex justify-content-end"><button type="button" className="btn-close top-0 end-0" data-bs-dismiss="toast" aria-label="Close"></button></div>
-                    <p>{infoToast}</p>
-                </div>
-            </div>
-        </div>
+        <ToastAff infoToast={infoToast} statutToast={statutToast}></ToastAff>
         {provenance === "add" ? <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Ajout des postes</h1></div> : ""}
         {provenance === "update" ? <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Modification des postes</h1></div> : ""}
         {provenance === "details" ? <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Détails des postes</h1></div> : ""}
@@ -207,28 +202,28 @@ function Poste(props) {
         </div>
         <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Machines adaptées au poste </h1></div>
         {provenance !== "details" ? <>
-        <div className="d-flex flex-column align-items-center w-100" style={{ width: "85%", paddingTop: "50px" }}>
-        <div className="d-flex align-items-center justify-content-between" style={{ width: "85%", height: '5%' }}>
-            <div className="input-group w-50 anim">
-                <input type="text" className="form-control w-25" placeholder={'Rechercher'} onChange={(event) => { recherche(event.target.value) }}></input>
-                <span className="input-group-text" id="basic-addon1"><button className="btn" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                    data-bs-title="Rechercher"><FontAwesomeIcon icon="fa-solid fa-plus" /></button></span>
+            <div className="d-flex flex-column align-items-center w-100" style={{ width: "85%", paddingTop: "50px" }}>
+                <div className="d-flex align-items-center justify-content-between" style={{ width: "85%", height: '5%' }}>
+                    <div className="input-group w-50 anim">
+                        <input type="text" className="form-control w-25" placeholder={'Rechercher'} onChange={debounce((event) => { recherche(event.target.value) }, 500)}></input>
+                        <span className="input-group-text" id="basic-addon1"><button className="btn" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                            data-bs-title="Rechercher"><FontAwesomeIcon icon="fa-solid fa-plus" /></button></span>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    <div className="d-flex flex-column align-items-center w-100" style={{ width: "85%" }}>
-        <div className="d-flex align-items-center justify-content-between" style={{ width: "85%"}}>
-            <div className="input-group w-50 anim">
-                {rechercheResult.map((elem, index) => {
-                    return (<>
-                        <div onClick={() => { addListe(elem.id, elem.libelle) }} className="d-flex align-items-center my-1 justify-content-between rechercheListe">
-                            <div><b>{elem.id}</b> - {elem.libelle}</div>
-                        </div></>)
-                })}
-            </div>
-        </div>
-    </div></> : ""}
-        
+            <div className="d-flex flex-column align-items-center w-100">
+                <div className="d-flex align-items-center justify-content-between" style={{ width: "85%" }}>
+                    {rechercheResult.length > 0 && <div className="input-group w-50 anim border border-2">
+                        {rechercheResult.map((elem, index) => {
+                            return (<>
+                                <div onClick={() => { addListe(elem.id, elem.libelle) }} className="d-flex align-items-center my-1 mx-2 rechercheListe w-100">
+                                    <div className='mx-2'><b>{elem.id}</b> - {elem.libelle}</div>
+                                </div></>)
+                        })}
+                    </div>}
+                </div>
+            </div></> : ""}
+
         <div className="d-flex flex-column align-items-center w-100">
             {rechercheResult2.map((elem, index) => {
                 return (<>
@@ -241,7 +236,7 @@ function Poste(props) {
                             <button onClick={() => { deleteList(index) }} className="btn border border-2 mx-1 button bg-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
                                 data-bs-title="Supprimer"><FontAwesomeIcon icon="fa-solid fa-trash" style={{ color: "#ffffff", }} /></button>
                         </div> : ""}
-                        
+
                     </div></>)
             })}
 
