@@ -7,4 +7,4 @@ web:
       root: ''
  # The front-controller pattern is commonly used in applications to provide a single point of entry for all requests.
  # For static sites, the index.html file often serves as the entry point.
-      index: ['/src/index.js']
+      index: ['app/src/index.js']
