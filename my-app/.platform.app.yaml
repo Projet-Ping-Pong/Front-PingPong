@@ -2,7 +2,7 @@ name: 'app'
 type: 'nodejs:20'
 web:
   locations:
-    '/src/':
+    '/':
  # The folder in which your web application's HTML files and assets are stored
       root: ''
  # The front-controller pattern is commonly used in applications to provide a single point of entry for all requests.
