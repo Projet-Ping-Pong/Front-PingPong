@@ -45,8 +45,11 @@ function Operation(props) {
                         setStatutToast('error')
                         new Toast(document.querySelector('.toast')).show()
                     } else {
-                        setLibelle(data.libelle)
-                        setDescription(data.description)
+                        setLibelle(data.operation.libelle)
+                        setTemps(data.operation.temps)
+                        setDescription(data.operation.description)
+                        if (data.poste !== null) { setRechercheResultPosteAff([data.poste]) }
+                        if (data.machine !== null) { setRechercheResultMachineAff([data.machine]) }
                     }
                 })
                 .catch(error => {
@@ -105,7 +108,10 @@ function Operation(props) {
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
                 body: JSON.stringify({
                     libelle: libelle,
-                    description: description
+                    description: description,
+                    temps: temps,
+                    id_poste: rechercheResultPosteAff.length > 0 ? rechercheResultPosteAff[0].id : null,
+                    id_machine: rechercheResultMachineAff.length > 0 ? rechercheResultMachineAff[0].id : null
                 })
             })
             .then(response => response.json())
@@ -116,9 +122,8 @@ function Operation(props) {
                     setStatutToast('error')
                     new Toast(document.querySelector('.toast')).show()
                 } else {
-                    setInfoToast("Operation modifiée avec succès")
-                    setStatutToast('success')
-                    new Toast(document.querySelector('.toast')).show()
+                    localStorage.setItem("Toast", "successUpdate")
+                    window.location.href = '/operations'
                 }
             })
             .catch(error => {
@@ -128,11 +133,12 @@ function Operation(props) {
 
     const rechercheMachine = (rechercheLib) => {
         if (rechercheLib !== "") {
-            fetch(`${process.env.REACT_APP_URL}/machine/rechLibelle`,
+            fetch(`${process.env.REACT_APP_URL}/postemachine/rechLibelle`,
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
                     body: JSON.stringify({
+                        id_poste: rechercheResultPosteAff[0].id,
                         libelle: rechercheLib,
                     })
                 })
@@ -144,6 +150,7 @@ function Operation(props) {
                         setStatutToast('error')
                         new Toast(document.querySelector('.toast')).show()
                     } else {
+                        console.log(data);
                         setRechercheResultMachine(data)
                     }
 
@@ -167,7 +174,7 @@ function Operation(props) {
                     body: JSON.stringify({
                         libelle: rechercheLib,
                     })
-                })  
+                })
                 .then(response => response.json())
                 .then(data => {
                     if (data.erreur != null) {
@@ -176,6 +183,7 @@ function Operation(props) {
                         setStatutToast('error')
                         new Toast(document.querySelector('.toast')).show()
                     } else {
+                        console.log(data)
                         setRechercheResultPoste(data)
                     }
 
@@ -201,8 +209,10 @@ function Operation(props) {
             document.getElementById("recherchePoste").value = ""
         } else {
             setInfoToast("Il n'est pas possible d'ajouter plus d'un poste")
-            setStatutToast('success')
+            setStatutToast('error')
             new Toast(document.querySelector('.toast')).show()
+            setRechercheResultPoste([])
+            document.getElementById("recherchePoste").value = ""
         }
     }
 
@@ -217,21 +227,28 @@ function Operation(props) {
             document.getElementById("rechercheMachine").value = ""
         } else {
             setInfoToast("Il n'est pas possible d'ajouter plus d'une machine")
-            setStatutToast('success')
+            setStatutToast('error')
             new Toast(document.querySelector('.toast')).show()
+            setRechercheResultMachine([])
+            document.getElementById("rechercheMachine").value = ""
         }
     }
 
     function deleteListPoste(id) {
-        const tab = [...rechercheResultPosteAff]
-        tab.splice(id, 1)
-        setRechercheResultPosteAff(tab)
+        if (window.confirm("Voulez-vous supprimer le poste ?\nAttention la machine sera aussi supprimée")) {
+            const tab = [...rechercheResultPosteAff]
+            tab.splice(id, 1)
+            setRechercheResultPosteAff(tab)
+            setRechercheResultMachineAff([])
+        }
     }
 
     function deleteListMachine(id) {
-        const tab = [...rechercheResultMachineAff]
-        tab.splice(id, 1)
-        setRechercheResultMachineAff(tab)
+        if (window.confirm("Voulez-vous supprimer la machine ?")) {
+            const tab = [...rechercheResultMachineAff]
+            tab.splice(id, 1)
+            setRechercheResultMachineAff(tab)
+        }
     }
 
     return (<>
@@ -301,47 +318,53 @@ function Operation(props) {
             })}
 
         </div>
-        <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Machines</h1></div>
-        {provenance !== "details" ? <>
-            <div className="d-flex flex-column align-items-center w-100" style={{ width: "85%", paddingTop: "50px" }}>
-                <div className="d-flex align-items-center justify-content-between" style={{ width: "85%", height: '5%' }}>
-                    <div className="input-group w-50 anim">
-                        <input type="text" className="form-control w-25" id="rechercheMachine" placeholder={'Rechercher'} onChange={debounce((event) => { rechercheMachine(event.target.value) }, 500)}></input>
-                        <span className="input-group-text" id="basic-addon1"><button className="btn" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                            data-bs-title="Rechercher"><FontAwesomeIcon icon="fa-solid fa-plus" /></button></span>
-                    </div>
-                </div>
-            </div>
-            <div className="d-flex flex-column align-items-center w-100">
-                <div className="d-flex align-items-center justify-content-between" style={{ width: "85%" }}>
-                    {rechercheResultMachine.length > 0 && <div className="input-group w-50 anim border border-2">
-                        {rechercheResultMachine.map((elem, index) => {
-                            return (<>
-                                <div onClick={() => { addListeMachine(elem.id, elem.libelle) }} className="d-flex align-items-center my-1 mx-2 rechercheListe w-100">
-                                    <div className='mx-2'><b>{elem.id}</b> - {elem.libelle}</div>
-                                </div></>)
-                        })}
-                    </div>}
-                </div>
-            </div></> : ""}
-
-        <div className="d-flex flex-column align-items-center w-100">
-            {rechercheResultMachineAff.map((elem, index) => {
-                return (<>
-                    <div className="d-flex align-items-center bg-body-secondary list carte my-1 justify-content-between" style={{ width: "85%", height: '15%' }}>
-                        <div className="mx-3 d-flex align-items-center w-75">
-                            <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>{elem.id}</b></div>
-                            <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.libelle}</div>
+        {
+            rechercheResultPosteAff.length > 0 &&
+            <>
+                <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Machines</h1></div>
+                {provenance !== "details" ? <>
+                    <div className="d-flex flex-column align-items-center w-100" style={{ width: "85%", paddingTop: "50px" }}>
+                        <div className="d-flex align-items-center justify-content-between" style={{ width: "85%", height: '5%' }}>
+                            <div className="input-group w-50 anim">
+                                <input type="text" className="form-control w-25" id="rechercheMachine" placeholder={'Rechercher'} onChange={debounce((event) => { rechercheMachine(event.target.value) }, 500)}></input>
+                                <span className="input-group-text" id="basic-addon1"><button className="btn" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                    data-bs-title="Rechercher"><FontAwesomeIcon icon="fa-solid fa-plus" /></button></span>
+                            </div>
                         </div>
-                        {provenance !== "details" ? <div className="mx-3 w-25 d-flex justify-content-end">
-                            <button onClick={() => { deleteListMachine(index) }} className="btn border border-2 mx-1 button bg-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                                data-bs-title="Supprimer"><FontAwesomeIcon icon="fa-solid fa-trash" style={{ color: "#ffffff", }} /></button>
-                        </div> : ""}
+                    </div>
+                    <div className="d-flex flex-column align-items-center w-100">
+                        <div className="d-flex align-items-center justify-content-between" style={{ width: "85%" }}>
+                            {rechercheResultMachine.length > 0 && <div className="input-group w-50 anim border border-2">
+                                {rechercheResultMachine.map((elem, index) => {
+                                    return (<>
+                                        <div onClick={() => { addListeMachine(elem.id, elem.libelle) }} className="d-flex align-items-center my-1 mx-2 rechercheListe w-100">
+                                            <div className='mx-2'><b>{elem.id}</b> - {elem.libelle}</div>
+                                        </div></>)
+                                })}
+                            </div>}
+                        </div>
+                    </div></> : ""}
 
-                    </div></>)
-            })}
+                <div className="d-flex flex-column align-items-center w-100">
+                    {rechercheResultMachineAff.map((elem, index) => {
+                        return (<>
+                            <div className="d-flex align-items-center bg-body-secondary list carte my-1 justify-content-between" style={{ width: "85%", height: '15%' }}>
+                                <div className="mx-3 d-flex align-items-center w-75">
+                                    <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>{elem.id}</b></div>
+                                    <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.libelle}</div>
+                                </div>
+                                {provenance !== "details" ? <div className="mx-3 w-25 d-flex justify-content-end">
+                                    <button onClick={() => { deleteListMachine(index) }} className="btn border border-2 mx-1 button bg-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                        data-bs-title="Supprimer"><FontAwesomeIcon icon="fa-solid fa-trash" style={{ color: "#ffffff", }} /></button>
+                                </div> : ""}
 
-        </div>
+                            </div></>)
+                    })}
+
+                </div>
+            </>
+        }
+
         <div className='flex-grow-1'>
             <div className="w-100 d-flex justify-content-center mt-5 anim">
                 {provenance === "add" ? <button className="btn border border-2 px-4 button bg-primary" type="button" style={{ color: "#ffffff", }} onClick={() => { add() }}><FontAwesomeIcon icon="fa-solid fa-plus" />&nbsp;&nbsp; Ajouter une operation</button> : ""}

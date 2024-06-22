@@ -29,6 +29,13 @@ function OperationList(props) {
             setStatutToast('success')
             new Toast(document.querySelector('.toast')).show()
         }
+
+        if (localStorage.getItem("Toast") === "successUpdate") {
+            localStorage.setItem("Toast", "")
+            setInfoToast("Operation modifiée avec succès")
+            setStatutToast('success')
+            new Toast(document.querySelector('.toast')).show()
+        }
     })
 
     useEffect(() => {
@@ -126,7 +133,6 @@ function OperationList(props) {
                 } else {
                     setRechercheResult(data)
                 }
-
             })
             .catch(error => {
                 setInfoToast(error)

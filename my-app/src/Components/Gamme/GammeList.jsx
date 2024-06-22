@@ -29,37 +29,43 @@ function GammeList(props) {
             setStatutToast('success')
             new Toast(document.querySelector('.toast')).show()
         }
+        if (localStorage.getItem("Toast") === "successUpdate") {
+            localStorage.setItem("Toast", "")
+            setInfoToast("Gamme modifiée avec succès")
+            setStatutToast('success')
+            new Toast(document.querySelector('.toast')).show()
+        }
     })
 
-    // useEffect(() => {
-    //     if (rechercheInput !== "" || rechercheInput !== null) {
-    //         fetch(`${process.env.REACT_APP_URL}/gamme/rechLibelle`,
-    //             {
-    //                 method: 'POST',
-    //                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
-    //                 body: JSON.stringify({
-    //                     libelle: rechercheInput,
-    //                 })
-    //             })
-    //             .then(response => response.json())
-    //             .then(data => {
-    //                 if (data.erreur != null) {
-    //                     // Erreur, phrase définie dans le back
-    //                     setInfoToast(data.erreur)
-    //                     setStatutToast('error')
-    //                     new Toast(document.querySelector('.toast')).show()
-    //                 } else {
-    //                     setRechercheResult(data)
-    //                 }
+    useEffect(() => {
+        if (rechercheInput !== "" || rechercheInput !== null) {
+            fetch(`${process.env.REACT_APP_URL}/gamme/rechLibelle`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
+                    body: JSON.stringify({
+                        libelle: rechercheInput,
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.erreur != null) {
+                        // Erreur, phrase définie dans le back
+                        setInfoToast(data.erreur)
+                        setStatutToast('error')
+                        new Toast(document.querySelector('.toast')).show()
+                    } else {
+                        setRechercheResult(data)
+                    }
 
-    //             })
-    //             .catch(error => {
-    //                 setInfoToast(error)
-    //                 setStatutToast('error')
-    //                 new Toast(document.querySelector('.toast')).show()
-    //             });
-    //     }
-    // }, [rechercheInput])
+                })
+                .catch(error => {
+                    setInfoToast(error)
+                    setStatutToast('error')
+                    new Toast(document.querySelector('.toast')).show()
+                });
+        }
+    }, [rechercheInput])
 
     function getAll() {
         fetch(`${process.env.REACT_APP_URL}/gamme/getAll`,

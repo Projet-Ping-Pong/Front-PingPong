@@ -19,9 +19,9 @@ function PieceAjout(props) {
 
     const [id, setId] = useState("")
     const [libelle, setLibelle] = useState("")
-    const [prixVente, setPrixVente] = useState("")
-    const [prixAchat, setPrixAchat] = useState("")
-    const [quantite, setQuantite] = useState("")
+    const [prixVente, setPrixVente] = useState()
+    const [prixAchat, setPrixAchat] = useState()
+    const [quantite, setQuantite] = useState()
     const [unite, setUnite] = useState("")
     const [type, setType] = useState("")
 
@@ -30,6 +30,41 @@ function PieceAjout(props) {
 
     const [rechercheResultPiece, setRechercheResultPiece] = useState([])
     const [rechercheResultPiece2, setRechercheResultPiece2] = useState([])
+
+    useEffect(() => {
+        const search = window.location.search; // returns the URL query String
+        const params = new URLSearchParams(search);
+        const IdFromURL = params.get('id');
+        setId(IdFromURL)
+
+        if (provenance === "update" || provenance === "details") {
+            fetch(`${process.env.REACT_APP_URL}/piece/getId`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
+                    body: JSON.stringify({
+                        id: IdFromURL,
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.erreur != null) {
+                        // Erreur, phrase définie dans le back
+                        setInfoToast(data.erreur)
+                        setStatutToast('error')
+                        new Toast(document.querySelector('.toast')).show()
+                    } else {
+                        setRechercheResultPiece(data)
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
+                });
+        }
+        if (provenance === "details") {
+            setIsDetails(true)
+        }
+    }, [])
 
     function add() {
         if (libelle === "" || libelle === null) {
@@ -49,7 +84,7 @@ function PieceAjout(props) {
                         unite: unite,
                         type: type,
                         id_gamme: rechercheResultGamme2[0].id,
-                    })
+                    })  
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -89,7 +124,14 @@ function PieceAjout(props) {
                         setStatutToast('error')
                         new Toast(document.querySelector('.toast')).show()
                     } else {
-                        setRechercheResultGamme(data)
+                        var tabGamme = []
+                        console.log(data);
+                        data.forEach(element => {
+                            if(element.id_piece == null){
+                                tabGamme.push(element)
+                            }
+                        });
+                        setRechercheResultGamme(tabGamme)
                     }
 
                 })
@@ -186,7 +228,7 @@ function PieceAjout(props) {
         <div className="d-flex flex-column align-items-center w-100" style={{ width: "85%", paddingTop: "50px" }}>
             <div className="d-flex flex-wrap bg-body-secondary list carte mb-3" style={{ width: "85%", height: '5%' }}>
                 <div className="mx-3 d-flex align-items-center justify-content-between w-100 mb-3">
-                    <input type="text" className="form-control w-25" placeholder={'Référence'}></input>
+                    <input type="text" className="form-control w-25" placeholder={'Référence'} disabled={true}></input>
                     <input type="text" className="form-control w-25" placeholder={'Prix de vente'} value={prixVente} onChange={(event) => { setPrixVente(event.target.value) }} disabled={disablePrixVente}></input>
                     <input type="text" className="form-control w-25" placeholder={'Quantité'} value={quantite} onChange={(event) => { setQuantite(event.target.value) }}></input>
                 </div>

@@ -28,6 +28,12 @@ function PosteList(props) {
           setStatutToast('success')
           new Toast(document.querySelector('.toast')).show()
         }
+        if (localStorage.getItem("Toast") === "successUpdate") {
+            localStorage.setItem("Toast", "")
+            setInfoToast("Poste modifié avec succès")
+            setStatutToast('success')
+            new Toast(document.querySelector('.toast')).show()
+          }
       })
 
     useEffect(() => {
@@ -82,7 +88,7 @@ function PosteList(props) {
     }
 
     function deleteElem(id) {
-        if (window.confirm("Voulez-vous supprimer le poste avec l'id : " + id)) {
+        if (window.confirm("Voulez-vous supprimer le poste avec l'id : " + id + "?")) {
             fetch(`${process.env.REACT_APP_URL}/poste/delete/${id}`,
                 {
                     method: 'DELETE',

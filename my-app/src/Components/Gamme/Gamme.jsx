@@ -20,6 +20,9 @@ function Gamme(props) {
     const [rechercheResultOperation, setRechercheResultOperation] = useState([])
     const [rechercheResultOperationAff, setRechercheResultOperationAff] = useState([])
 
+    const [rechercheResultPiece, setRechercheResultPiece] = useState([])
+    const [rechercheResultPieceAff, setRechercheResultPieceAff] = useState([])
+
     useEffect(() => {
         const search = window.location.search; // returns the URL query String
         const params = new URLSearchParams(search);
@@ -27,7 +30,7 @@ function Gamme(props) {
         setId(IdFromURL)
 
         if (provenance === "update" || provenance === "details") {
-            fetch(`${process.env.REACT_APP_URL}/operation/getId`,
+            fetch(`${process.env.REACT_APP_URL}/gamme/getId`,
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
@@ -45,6 +48,55 @@ function Gamme(props) {
                     } else {
                         setLibelle(data.libelle)
                         setDescription(data.description)
+                        setResp(data.responsable)
+                        fetch(`${process.env.REACT_APP_URL}/gammeoperation/getOpByIdGamme`,
+                            {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
+                                body: JSON.stringify({
+                                    id_gamme: IdFromURL,
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.erreur != null) {
+                                    // Erreur, phrase définie dans le back
+                                    setInfoToast(data.erreur)
+                                    setStatutToast('error')
+                                    new Toast(document.querySelector('.toast')).show()
+                                } else {
+                                    setRechercheResultOperationAff(data)
+                                }
+                            })
+                            .catch(error => {
+                                console.log(error)
+                            });
+                        if(data.id_piece != undefined && data.id_piece != null){
+                            fetch(`${process.env.REACT_APP_URL}/piece/getId`,
+                                {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
+                                    body: JSON.stringify({
+                                        id: data.id_piece,
+                                    })
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.erreur != null) {
+                                        // Erreur, phrase définie dans le back
+                                        setInfoToast(data.erreur)
+                                        setStatutToast('error')
+                                        new Toast(document.querySelector('.toast')).show()
+                                    } else {
+                                        setRef(data.libelle)
+                                        addListePiece(data.id, data.libelle)
+                                    }
+                                })
+                                .catch(error => {
+                                    console.log(error)
+                                });
+                        }
+                        
                     }
                 })
                 .catch(error => {
@@ -70,8 +122,8 @@ function Gamme(props) {
                         libelle: libelle,
                         description: description,
                         responsable: resp,
-                        id_piece: ref,
-                        operationList: rechercheResultOperation
+                        id_piece: rechercheResultPieceAff.id,
+                        operationList: rechercheResultOperationAff
                     })
                 })
                 .then(response => response.json())
@@ -93,13 +145,17 @@ function Gamme(props) {
     }
 
     function update(id) {
-        fetch(`${process.env.REACT_APP_URL}/operation/update/${id}`,
+        console.log(rechercheResultOperation);
+        fetch(`${process.env.REACT_APP_URL}/gamme/update/${id}`,
             {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
                 body: JSON.stringify({
                     libelle: libelle,
-                    description: description
+                    description: description,
+                    id_piece: rechercheResultPieceAff.length>0?rechercheResultPieceAff[0].id:null,
+                    responsable: resp,
+                    operationList: rechercheResultOperationAff
                 })
             })
             .then(response => response.json())
@@ -110,9 +166,8 @@ function Gamme(props) {
                     setStatutToast('error')
                     new Toast(document.querySelector('.toast')).show()
                 } else {
-                    setInfoToast("Operation modifiée avec succès")
-                    setStatutToast('success')
-                    new Toast(document.querySelector('.toast')).show()
+                    localStorage.setItem("Toast", "successUpdate")
+                    window.location.href = '/gammes'
                 }
             })
             .catch(error => {
@@ -170,6 +225,81 @@ function Gamme(props) {
         setRechercheResultOperationAff(tab)
     }
 
+    const recherchePiece = (rechercheLib) => {
+        if (rechercheLib !== "") {
+            fetch(`${process.env.REACT_APP_URL}/piece/rechLibelle`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
+                    body: JSON.stringify({
+                        libelle: rechercheLib,
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.erreur != null) {
+                        // Erreur, phrase définie dans le back
+                        setInfoToast(data.erreur)
+                        setStatutToast('error')
+                        new Toast(document.querySelector('.toast')).show()
+                    } else {
+                        setRechercheResultPiece(data)
+                    }
+
+                })
+                .catch(error => {
+                    setInfoToast(error)
+                    setStatutToast('error')
+                    new Toast(document.querySelector('.toast')).show()
+                });
+        } else {
+            setRechercheResultPiece([])
+        }
+    }
+
+    function addListePiece(id, libelle) {
+        const tab = [{
+            id: id,
+            libelle: libelle
+        }]
+        document.getElementById("recherchePiece").value = libelle
+        setRechercheResultPieceAff(tab)
+        setRechercheResultPiece("")
+    }
+
+    function deleteListOperation(id, id_gamme, id_operation) {
+        if (window.confirm("Voulez-vous supprimer la liaison de l'opération avec l'id : " + id_operation + "?\nAttention cette action est irreversible")) {
+            fetch(`${process.env.REACT_APP_URL}/gammeoperation/delete`,
+                {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
+                    body: JSON.stringify({
+                        id_gamme: id_gamme,
+                        id_operation: id_operation,
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.erreur != null) {
+                        // Erreur, phrase définie dans le back
+                        setInfoToast(data.erreur)
+                        setStatutToast('error')
+                        new Toast(document.querySelector('.toast')).show()
+                    } else {
+                        const tab = [...rechercheResultOperationAff]
+                        tab.splice(id, 1)
+                        setRechercheResultOperationAff(tab)
+                        setInfoToast("Liaison supprimée avec succès")
+                        setStatutToast('success')
+                        new Toast(document.querySelector('.toast')).show()
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
+                });
+        }
+    }
+
     return (<>
         <ToastAff infoToast={infoToast} statutToast={statutToast}></ToastAff>
         {provenance === "add" ? <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Ajout des gammes</h1></div> : ""}
@@ -178,9 +308,21 @@ function Gamme(props) {
 
         <div className="d-flex flex-column align-items-center w-100" style={{ width: "85%", paddingTop: "50px" }}>
             <div className="d-flex flex-wrap bg-body-secondary justify-content-between list carte" style={{ width: "85%", height: '5%' }}>
-                <form className="mx-3 d-flex align-items-center justify-content-between form-floating" style={{ width: "20%" }}>
-                    <input type="text" className="form-control w-100" id="floatingInputLibelle" placeholder={'Réf. Pièce'} value={ref} onChange={(event) => { setRef(event.target.value) }} disabled={isDetails}></input>
-                    <label for="floatingInputLibelle">Réf. Pièce</label>
+                <form className="mx-3 d-flex-wrap align-items-center justify-content-between form-floating" style={{ width: "20%" }}>
+                    <input type="text" className="form-control w-100" id="recherchePiece" placeholder={'Pièce'} onChange={debounce((event) => { recherchePiece(event.target.value) }, 500)} disabled={isDetails}></input>
+                    <label for="recherchePiece">Pièce</label>
+                    <div className="d-flex flex-column align-items-center w-100">
+                        <div className="d-flex align-items-center justify-content-between" style={{ width: "100%" }}>
+                            {rechercheResultPiece.length > 0 && <div className="input-group anim border border-2">
+                                {rechercheResultPiece.map((elem) => {
+                                    return (<>
+                                        <div onClick={() => { addListePiece(elem.id, elem.libelle) }} className="d-flex align-items-center my-1 mx-2 rechercheListe w-100">
+                                            <div className='mx-2'><b>{elem.id}</b> - {elem.libelle}</div>
+                                        </div></>)
+                                })}
+                            </div>}
+                        </div>
+                    </div>
                 </form>
                 <form className="mx-3 d-flex align-items-center justify-content-between form-floating" style={{ width: "50%" }}>
                     <input type="text" className="form-control w-100" id="floatingInputLibelle" placeholder={'Libellé'} value={libelle} onChange={(event) => { setLibelle(event.target.value) }} disabled={isDetails}></input>
@@ -233,7 +375,7 @@ function Gamme(props) {
                             <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.libelle}</div>
                         </div>
                         {provenance !== "details" ? <div className="mx-3 w-25 d-flex justify-content-end">
-                            <button onClick={() => { deleteListOperation(index) }} className="btn border border-2 mx-1 button bg-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                            <button onClick={() => { console.log("------------------- index : " + index + "id : " + id + "elem.id : " + elem.id) ;deleteListOperation(index, id, elem.id) }} className="btn border border-2 mx-1 button bg-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
                                 data-bs-title="Supprimer"><FontAwesomeIcon icon="fa-solid fa-trash" style={{ color: "#ffffff", }} /></button>
                         </div> : ""}
 

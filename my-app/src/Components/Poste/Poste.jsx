@@ -131,32 +131,37 @@ function Poste(props) {
     }
 
     function update(id) {
-        fetch(`${process.env.REACT_APP_URL}/poste/update/${id}`,
-            {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
-                body: JSON.stringify({
-                    libelle: libelle,
-                    description: description,
-                    machines: rechercheResult2
+        if (libelle === "" || libelle === null) {
+            setInfoToast("Le libellé est vide")
+            setStatutToast('error')
+            new Toast(document.querySelector('.toast')).show()
+        } else {
+            fetch(`${process.env.REACT_APP_URL}/poste/update/${id}`,
+                {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
+                    body: JSON.stringify({
+                        libelle: libelle,
+                        description: description,
+                        machines: rechercheResult2
+                    })
                 })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.erreur != null) {
-                    // Erreur, phrase définie dans le back
-                    setInfoToast(data.erreur)
-                    setStatutToast('error')
-                    new Toast(document.querySelector('.toast')).show()
-                } else {
-                    setInfoToast("Poste modifié avec succès")
-                    setStatutToast('success')
-                    new Toast(document.querySelector('.toast')).show()
-                }
-            })
-            .catch(error => {
-                console.log(error)
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.erreur != null) {
+                        // Erreur, phrase définie dans le back
+                        setInfoToast(data.erreur)
+                        setStatutToast('error')
+                        new Toast(document.querySelector('.toast')).show()
+                    } else {
+                        localStorage.setItem("Toast", "successUpdate")
+                        window.location.href = '/postes'
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
+                });
+        }
     }
 
     function addListe(id, libelle) {
@@ -169,15 +174,43 @@ function Poste(props) {
             setRechercheResult([])
         } else {
             setInfoToast("Machine déjà présente dans la liste des machines adaptées au poste")
-            setStatutToast('success')
+            setStatutToast('error')
             new Toast(document.querySelector('.toast')).show()
         }
+        document.getElementById("recherche").value = ""
     }
 
-    function deleteList(id) {
-        const tab = [...rechercheResult2]
-        tab.splice(id, 1)
-        setRechercheResult2(tab)
+    function deleteList(id, id_poste, id_machine) {
+        if (window.confirm("Voulez-vous supprimer la liaison de la machine avec l'id : " + id_machine + "\nAttention cette action est irreversible")) {
+            fetch(`${process.env.REACT_APP_URL}/postemachine/delete`,
+                {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
+                    body: JSON.stringify({
+                        id_poste: id_poste,
+                        id_machine: id_machine,
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.erreur != null) {
+                        // Erreur, phrase définie dans le back
+                        setInfoToast(data.erreur)
+                        setStatutToast('error')
+                        new Toast(document.querySelector('.toast')).show()
+                    } else {
+                        const tab = [...rechercheResult2]
+                        tab.splice(id, 1)
+                        setRechercheResult2(tab)
+                        setInfoToast("Liaison supprimée avec succès")
+                        setStatutToast('success')
+                        new Toast(document.querySelector('.toast')).show()
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
+                });
+        }
     }
 
     return (<>
@@ -188,16 +221,18 @@ function Poste(props) {
 
         <div className="d-flex flex-column align-items-center w-100" style={{ width: "85%", paddingTop: "50px" }}>
             <div className="d-flex flex-wrap bg-body-secondary list carte" style={{ width: "85%", height: '5%' }}>
-                <div className="mx-3 d-flex align-items-center justify-content-between w-100">
-                    <input type="text" className="form-control w-100" placeholder={'Libellé'} value={libelle} onChange={(event) => { setLibelle(event.target.value) }} disabled={isDetails}></input>
-                </div>
+                <form class="mx-3 d-flex align-items-center justify-content-between w-100 form-floating">
+                    <input type="text" className="form-control w-100" id="floatingInputLibelle" placeholder={'Libellé'} value={libelle} onChange={(event) => { setLibelle(event.target.value) }} disabled={isDetails}></input>
+                    <label for="floatingInputLibelle">Libellé</label>
+                </form>
             </div>
         </div>
         <div className="d-flex flex-column align-items-center w-100" style={{ width: "85%", paddingTop: "50px" }}>
             <div className="d-flex flex-wrap bg-body-secondary list carte" style={{ width: "85%", height: '5%' }}>
-                <div className="mx-3 d-flex align-items-center justify-content-between w-100">
-                    <textarea type="textarea" rows="5" className="form-control w-100" placeholder={'Description'} value={description} onChange={(event) => { setDescription(event.target.value) }} disabled={isDetails}></textarea>
-                </div>
+                <form class="mx-3 d-flex align-items-center justify-content-between w-100 form-floating">
+                    <textarea type="textarea" rows="5" id="floatingInputDescription" className="form-control w-100" placeholder={'Description'} value={description} onChange={(event) => { setDescription(event.target.value) }} disabled={isDetails}></textarea>
+                    <label for="floatingInputDescription">Description</label>
+                </form>
             </div>
         </div>
         <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Machines adaptées au poste </h1></div>
@@ -205,7 +240,7 @@ function Poste(props) {
             <div className="d-flex flex-column align-items-center w-100" style={{ width: "85%", paddingTop: "50px" }}>
                 <div className="d-flex align-items-center justify-content-between" style={{ width: "85%", height: '5%' }}>
                     <div className="input-group w-50 anim">
-                        <input type="text" className="form-control w-25" placeholder={'Rechercher'} onChange={debounce((event) => { recherche(event.target.value) }, 500)}></input>
+                        <input type="text" className="form-control w-25" placeholder={'Rechercher'} id="recherche" onChange={debounce((event) => { recherche(event.target.value) }, 500)}></input>
                         <span className="input-group-text" id="basic-addon1"><button className="btn" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
                             data-bs-title="Rechercher"><FontAwesomeIcon icon="fa-solid fa-plus" /></button></span>
                     </div>
@@ -233,7 +268,7 @@ function Poste(props) {
                             <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.libelle}</div>
                         </div>
                         {provenance !== "details" ? <div className="mx-3 w-25 d-flex justify-content-end">
-                            <button onClick={() => { deleteList(index) }} className="btn border border-2 mx-1 button bg-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                            <button onClick={() => { deleteList(index, id, elem.id) }} className="btn border border-2 mx-1 button bg-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
                                 data-bs-title="Supprimer"><FontAwesomeIcon icon="fa-solid fa-trash" style={{ color: "#ffffff", }} /></button>
                         </div> : ""}
 

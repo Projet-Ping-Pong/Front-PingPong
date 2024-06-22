@@ -29,6 +29,12 @@ function MachineList(props) {
             setStatutToast('success')
             new Toast(document.querySelector('.toast')).show()
         }
+        if (localStorage.getItem("Toast") === "successUpdate") {
+            localStorage.setItem("Toast", "")
+            setInfoToast("Machine modifiée avec succès")
+            setStatutToast('success')
+            new Toast(document.querySelector('.toast')).show()
+        }
     })
 
     useEffect(() => {
@@ -87,7 +93,7 @@ function MachineList(props) {
     }
 
     function deleteElem(id) {
-        if (window.confirm("Voulez-vous supprimer la machine avec l'id : " + id)) {
+        if (window.confirm("Voulez-vous supprimer la machine")) {
             fetch(`${process.env.REACT_APP_URL}/machine/delete/${id}`,
                 {
                     method: 'DELETE',

@@ -16,6 +16,9 @@ function Liste(props) {
         if (props.prov === "gamme") {
             return window.location.href = `/gammesCRUD?id=${id}`;
         }
+        if (props.prov === "piece") {
+            return window.location.href = `/piecesCRUD?id=${id}`;
+        }
     }
 
     function headChangeProv() {
@@ -85,9 +88,20 @@ function Liste(props) {
 
                                 <div className="mx-3 w-25 d-flex justify-content-end">
                                     {
-                                        (props.prov === "gamme" || props.prov === "piece") &&
+                                        (props.prov === "gamme" || props.prov === "piece") && elem.id_gamme !== null && elem.id_piece !== null &&
                                         <>
-                                            <button className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                            <button onClick={
+                                                () => {
+                                                    if(props.prov === "gamme"){
+                                                        window.location.href = `/fabrications?id=${elem.id}`;
+                                                        sessionStorage.setItem("Provenance", "fabrication")
+                                                    }else{
+                                                        window.location.href = `/fabrications?id=${elem.id_gamme}`;
+                                                        sessionStorage.setItem("Provenance", "fabrication")
+                                                    }
+                                                    
+                                                }
+                                            } className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
                                                 data-bs-title="Fabriquer"><FontAwesomeIcon icon="fa-solid fa-screwdriver-wrench" style={{ color: "#ffffff", }} /></button>
                                         </>
                                     }

@@ -51,61 +51,72 @@ function Machine(props) {
     }, [])
 
     function add() {
-        fetch(`${process.env.REACT_APP_URL}/machine/add`,
-            {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
-                body: JSON.stringify({
-                    libelle: libelle,
-                    description: description
+        if (libelle === "" || libelle === null) {
+            setInfoToast("Le libellé est vide")
+            setStatutToast('error')
+            new Toast(document.querySelector('.toast')).show()
+        } else {
+            fetch(`${process.env.REACT_APP_URL}/machine/add`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
+                    body: JSON.stringify({
+                        libelle: libelle,
+                        description: description
+                    })
                 })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.erreur != null) {
-                    // Erreur, phrase définie dans le back
-                    setInfoToast(data.erreur)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.erreur != null) {
+                        // Erreur, phrase définie dans le back
+                        setInfoToast(data.erreur)
+                        setStatutToast('error')
+                        new Toast(document.querySelector('.toast')).show()
+                    } else {
+                        // Success, Vous êtes bien connecté(e)
+                        localStorage.setItem("Toast", "success")
+                        window.location.href = '/machines'
+                    }
+                })
+                .catch(error => {
+                    setInfoToast(error.body)
                     setStatutToast('error')
                     new Toast(document.querySelector('.toast')).show()
-                } else {
-                    // Success, Vous êtes bien connecté(e)
-                    localStorage.setItem("Toast", "success")
-                    window.location.href = '/machines'
-                }
-            })
-            .catch(error => {
-                setInfoToast(error.body)
-                setStatutToast('error')
-                new Toast(document.querySelector('.toast')).show()
-            });
+                });
+        }
     }
 
     function update(id) {
-        fetch(`${process.env.REACT_APP_URL}/machine/update/${id}`,
-            {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
-                body: JSON.stringify({
-                    libelle: libelle,
-                    description: description
+        if (libelle === "" || libelle === null) {
+            setInfoToast("Le libellé est vide")
+            setStatutToast('error')
+            new Toast(document.querySelector('.toast')).show()
+        } else {
+            fetch(`${process.env.REACT_APP_URL}/machine/update/${id}`,
+                {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
+                    body: JSON.stringify({
+                        libelle: libelle,
+                        description: description
+                    })
                 })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.erreur != null) {
-                    // Erreur, phrase définie dans le back
-                    setInfoToast(data.erreur)
-                    setStatutToast('error')
-                    new Toast(document.querySelector('.toast')).show()
-                } else {
-                    setInfoToast("Machine modifiée avec succès")
-                    setStatutToast('success')
-                    new Toast(document.querySelector('.toast')).show()
-                }
-            })
-            .catch(error => {
-                console.log(error)
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.erreur != null) {
+                        // Erreur, phrase définie dans le back
+                        setInfoToast(data.erreur)
+                        setStatutToast('error')
+                        new Toast(document.querySelector('.toast')).show()
+                    } else {
+                        localStorage.setItem("Toast", "successUpdate")
+                        window.location.href = '/machines'
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
+                });
+        }
     }
 
     return (<>

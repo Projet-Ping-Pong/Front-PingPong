@@ -55,7 +55,14 @@ function PieceList(props) {
         method: 'GET',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
       })
-      .then(response => response.json())
+      .then(response => {
+        if(response.status == 401){
+          localStorage.setItem("Token", "")
+          window.location.href = '/login'
+        }else{
+          response.json()
+        }
+      })
       .then(data => {
         if (data.erreur != null) {
           // Erreur, phrase définie dans le back
@@ -73,21 +80,18 @@ function PieceList(props) {
   }
 
   function deleteElem(id) {
-    /////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////
-    // AJOUT D'UNE CONFIRMATION   + BUG TOOLTIP
-    /////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////
-    fetch(`${process.env.REACT_APP_URL}/piece/delete/${id}`,
-      {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
-      })
-      .then(response => response.json())
-      .then(() => { getAll(); })
-      .catch(error => {
-        console.log(error)
-      });
+    if (window.confirm("Voulez-vous supprimer la pièce avec l'id : " + id)) {
+      fetch(`${process.env.REACT_APP_URL}/piece/delete/${id}`,
+        {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
+        })
+        .then(response => response.json())
+        .then(() => { getAll(); })
+        .catch(error => {
+          console.log(error)
+        });
+    }
   }
 
   const recherche = (rechercheLib) => {

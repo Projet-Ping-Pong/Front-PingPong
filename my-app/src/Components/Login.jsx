@@ -46,9 +46,6 @@ function Login() {
         })
         .catch(error => {
           console.log(error)
-          setInfoToast(error)
-          setStatutToast('error')
-          new Toast(document.querySelector('.toast')).show()
         });
     } else {
       // Erreur, Veuillez renseigner le nom d'utilisateur et le mot de passe
