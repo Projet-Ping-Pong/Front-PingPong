@@ -44,6 +44,16 @@ function Liste(props) {
                 <div className="mx-3 border-end border-2 px-3 listUnite text-truncate"><b>Unité</b></div>
             </>
         }
+        if (props.prov === "realisation") {
+            return <>
+                <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>ID</b></div>
+                <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate"><b>Libellé</b></div>
+                <div className="mx-3 border-end border-2 px-3 listQte text-truncate"><b>Temps</b></div>
+                <div className="mx-3 border-end border-2 px-3 listUnite text-truncate"><b>Poste</b></div>
+                <div className="mx-3 border-end border-2 px-3 listUnite text-truncate"><b>Machine</b></div>
+                <div className="mx-3 border-end border-2 px-3 listUnite text-truncate"><b>Date</b></div>
+            </>
+        }
     }
 
     return (<>
@@ -84,6 +94,17 @@ function Liste(props) {
                                             <div className="mx-3 border-end border-2 px-3 listUnite text-truncate">{elem.unite}</div>
                                         </>
                                     }
+                                    {
+                                        (props.prov === "realisation") &&
+                                        <>
+                                            <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>{elem.id}</b></div>
+                                            <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.libelle}</div>
+                                            <div className="mx-3 border-end border-2 px-3 listQte text-truncate">{elem.temps}</div>
+                                            <div className="mx-3 border-end border-2 px-3 listUnite text-truncate">{elem.poste}</div>
+                                            <div className="mx-3 border-end border-2 px-3 listUnite text-truncate">{elem.machine}</div>
+                                            <div className="mx-3 border-end border-2 px-3 listUnite text-truncate">{elem.date}</div>
+                                        </>
+                                    }
                                 </div>
 
                                 <div className="mx-3 w-25 d-flex justify-content-end">
@@ -105,7 +126,7 @@ function Liste(props) {
                                                 data-bs-title="Fabriquer"><FontAwesomeIcon icon="fa-solid fa-screwdriver-wrench" style={{ color: "#ffffff", }} /></button>
                                         </>
                                     }
-                                    <button onClick={
+                                    {props.prov !== "realisation" ? <><button onClick={
                                         () => {
                                             buttonChangeProv(elem.id)
                                             sessionStorage.setItem("Provenance", "details")
@@ -121,6 +142,14 @@ function Liste(props) {
                                     } className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
                                         data-bs-title="Modifier"><FontAwesomeIcon icon="fa-solid fa-pen-to-square" style={{ color: "#ffffff", }} /></button>
                                     <button onClick={() => { props.deleteElem(elem.id) }} className="btn border border-2 mx-1 button bg-danger" type="button"><FontAwesomeIcon icon="fa-solid fa-trash" style={{ color: "#ffffff", }} /></button>
+                                    </>:<button onClick={
+                                        () => {
+                                            buttonChangeProv(elem.id)
+                                            sessionStorage.setItem("Provenance", "details")
+                                        }
+                                    }
+                                        className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                        data-bs-title="Détails"><FontAwesomeIcon icon="fa-solid fa-magnifying-glass" style={{ color: "#ffffff", }} /></button>}
                                 </div>
                             </div>
                         </>)

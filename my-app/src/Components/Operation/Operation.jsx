@@ -48,8 +48,8 @@ function Operation(props) {
                         setLibelle(data.operation.libelle)
                         setTemps(data.operation.temps)
                         setDescription(data.operation.description)
-                        if (data.poste !== null) { setRechercheResultPosteAff([data.poste]) }
-                        if (data.machine !== null) { setRechercheResultMachineAff([data.machine]) }
+                        if (data.poste != null) { setRechercheResultPosteAff([data.poste]) }
+                        if (data.machine != null) { setRechercheResultMachineAff([data.machine]) }
                     }
                 })
                 .catch(error => {
@@ -75,8 +75,8 @@ function Operation(props) {
                         libelle: libelle,
                         description: description,
                         temps: temps,
-                        id_poste: rechercheResultPosteAff[0].id,
-                        id_machine: rechercheResultMachineAff[0].id
+                        id_poste: rechercheResultPosteAff.length>0?rechercheResultPosteAff[0].id:null,
+                        id_machine: rechercheResultMachineAff.length>0?rechercheResultMachineAff[0].id:null
                     })
                 })
                 .then(response => response.json())

@@ -17,13 +17,15 @@ function PieceAjout(props) {
 
     const [isDetails, setIsDetails] = useState(false)
 
-    const [id, setId] = useState("")
+    const [id, setId] = useState()
     const [libelle, setLibelle] = useState("")
     const [prixVente, setPrixVente] = useState()
     const [prixAchat, setPrixAchat] = useState()
     const [quantite, setQuantite] = useState()
     const [unite, setUnite] = useState("")
-    const [type, setType] = useState("")
+    const [type, setType] = useState()
+
+    const [qteCompo, setQteCompo] = useState()
 
     const [rechercheResultGamme, setRechercheResultGamme] = useState([])
     const [rechercheResultGamme2, setRechercheResultGamme2] = useState([])
@@ -55,6 +57,60 @@ function PieceAjout(props) {
                         new Toast(document.querySelector('.toast')).show()
                     } else {
                         setRechercheResultPiece(data)
+                        setLibelle(data.libelle)
+                        setPrixAchat(data.prix_catalogue)
+                        setPrixVente(data.prix_vente)
+                        setQuantite(data.stock)
+                        setUnite(data.unite)
+                        setType(data.type)
+
+                        if(data.id_gamme != null){
+                            fetch(`${process.env.REACT_APP_URL}/gamme/getId`,
+                                {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
+                                    body: JSON.stringify({
+                                        id: data.id_gamme,
+                                    })
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.erreur != null) {
+                                        // Erreur, phrase définie dans le back
+                                        setInfoToast(data.erreur)
+                                        setStatutToast('error')
+                                        new Toast(document.querySelector('.toast')).show()
+                                    } else {
+                                        setRechercheResultGamme2([data])
+                                    }
+                                })
+                                .catch(error => {
+                                    console.log(error)
+                                });
+                        }
+                        fetch(`${process.env.REACT_APP_URL}/piececompo/getCompoByIdPiece`,
+                            {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
+                                body: JSON.stringify({
+                                    id_piece_composant: IdFromURL,
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.erreur != null) {
+                                    // Erreur, phrase définie dans le back
+                                    setInfoToast(data.erreur)
+                                    setStatutToast('error')
+                                    new Toast(document.querySelector('.toast')).show()
+                                } else {
+                                    console.log(data);
+                                    setRechercheResultPiece2(data)
+                                }
+                            })
+                            .catch(error => {
+                                console.log(error)
+                            });
                     }
                 })
                 .catch(error => {
@@ -72,6 +128,17 @@ function PieceAjout(props) {
             setStatutToast('error')
             new Toast(document.querySelector('.toast')).show()
         } else {
+            var tabCompo = []
+            rechercheResultPiece2.forEach(element => {
+                console.log(element);
+                const id = document.getElementById(`id`+element.id).innerHTML
+                const quantite = document.getElementById(`quantite`+element.id).value!=""?document.getElementById(`quantite`+element.id).value:0
+                tabCompo = [...tabCompo,{
+                    id: parseInt(id),
+                    quantite: parseInt(quantite)
+                }]
+            })
+
             fetch(`${process.env.REACT_APP_URL}/piece/add`,
                 {
                     method: 'POST',
@@ -83,8 +150,9 @@ function PieceAjout(props) {
                         stock: quantite,
                         unite: unite,
                         type: type,
-                        id_gamme: rechercheResultGamme2[0].id,
-                    })  
+                        id_gamme: rechercheResultGamme2.length>0?rechercheResultGamme2[0].id:null,
+                        listCompo: tabCompo
+                    })
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -106,6 +174,50 @@ function PieceAjout(props) {
         }
     }
 
+    function update(id) {
+        var tabCompo = []
+        rechercheResultPiece2.forEach(element => {
+            console.log(element);
+            const id = document.getElementById(`id`+element.id).innerHTML
+            const quantite = document.getElementById(`quantite`+element.id).value!=""?document.getElementById(`quantite`+element.id).value:0
+            tabCompo = [...tabCompo,{
+                id: parseInt(id),
+                quantite: parseInt(quantite)
+            }]
+        })
+
+        fetch(`${process.env.REACT_APP_URL}/piece/update/${id}`,
+            {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
+                body: JSON.stringify({
+                    libelle: libelle,
+                    prix_vente: prixVente,
+                    prix_catalogue: prixAchat,
+                    stock: quantite,
+                    unite: unite,
+                    type: type,
+                    id_gamme: rechercheResultGamme2.length>0?rechercheResultGamme2[0].id:null,
+                    listCompo: tabCompo
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.erreur != null) {
+                    // Erreur, phrase définie dans le back
+                    setInfoToast(data.erreur)
+                    setStatutToast('error')
+                    new Toast(document.querySelector('.toast')).show()
+                } else {
+                    localStorage.setItem("Toast", "successUpdate")
+                    window.location.href = '/pieces'
+                }
+            })
+            .catch(error => {
+                console.log(error)
+            });
+    }
+
     const rechercheGamme = (rechercheLib) => {
         if (rechercheLib !== "") {
             fetch(`${process.env.REACT_APP_URL}/gamme/rechLibelle`,
@@ -125,7 +237,6 @@ function PieceAjout(props) {
                         new Toast(document.querySelector('.toast')).show()
                     } else {
                         var tabGamme = []
-                        console.log(data);
                         data.forEach(element => {
                             if(element.id_piece == null){
                                 tabGamme.push(element)
@@ -213,10 +324,38 @@ function PieceAjout(props) {
         setRechercheResultGamme2(tab)
     }
 
-    function deleteListPiece(id) {
-        const tab = [...rechercheResultPiece2]
-        tab.splice(id, 1)
-        setRechercheResultPiece2(tab)
+    function deleteListPiece(id, id_piece, id_compo) {
+       
+        if (window.confirm("Voulez-vous supprimer la pièce avec l'id : " + id_compo + " de la composition ?\nAttention cette action est irreversible")) {
+            fetch(`${process.env.REACT_APP_URL}/piececompo/delete`,
+                {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
+                    body: JSON.stringify({
+                        id_piece_composant: id_piece,
+                        id_piece_compose: id_compo,
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.erreur != null) {
+                        // Erreur, phrase définie dans le back
+                        setInfoToast(data.erreur)
+                        setStatutToast('error')
+                        new Toast(document.querySelector('.toast')).show()
+                    } else {
+                        const tab = [...rechercheResultPiece2]
+                        tab.splice(id, 1)
+                        setRechercheResultPiece2(tab)
+                        setInfoToast("Liaison supprimée avec succès")
+                        setStatutToast('success')
+                        new Toast(document.querySelector('.toast')).show()
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
+                });
+        }
     }
 
     return (<>
@@ -228,19 +367,19 @@ function PieceAjout(props) {
         <div className="d-flex flex-column align-items-center w-100" style={{ width: "85%", paddingTop: "50px" }}>
             <div className="d-flex flex-wrap bg-body-secondary list carte mb-3" style={{ width: "85%", height: '5%' }}>
                 <div className="mx-3 d-flex align-items-center justify-content-between w-100 mb-3">
-                    <input type="text" className="form-control w-25" placeholder={'Référence'} disabled={true}></input>
+                    <input type="text" className="form-control w-25" placeholder={'Référence'} value={id} disabled={true}></input>
                     <input type="text" className="form-control w-25" placeholder={'Prix de vente'} value={prixVente} onChange={(event) => { setPrixVente(event.target.value) }} disabled={disablePrixVente}></input>
-                    <input type="text" className="form-control w-25" placeholder={'Quantité'} value={quantite} onChange={(event) => { setQuantite(event.target.value) }}></input>
+                    <input type="text" className="form-control w-25" placeholder={'Quantité'} value={quantite} onChange={(event) => { setQuantite(event.target.value) }} disabled={isDetails}></input>
                 </div>
                 <div className="mx-3 d-flex align-items-center justify-content-between w-100">
-                    <input type="text" className="form-control w-25" placeholder={'Libellé'} value={libelle} onChange={(event) => { setLibelle(event.target.value) }}></input>
+                    <input type="text" className="form-control w-25" placeholder={'Libellé'} value={libelle} onChange={(event) => { setLibelle(event.target.value) }} disabled={isDetails}></input>
                     <input type="text" className="form-control w-25" placeholder={'Prix catalogue'} value={prixAchat} onChange={(event) => { setPrixAchat(event.target.value) }} disabled={disablePrixAchat}></input>
-                    <input type="text" className="form-control w-25" placeholder={'Unité'} value={unite} onChange={(event) => { setUnite(event.target.value) }}></input>
+                    <input type="text" className="form-control w-25" placeholder={'Unité'} value={unite} onChange={(event) => { setUnite(event.target.value) }} disabled={isDetails}></input>
                 </div>
             </div>
             <div className="d-flex flex-wrap bg-body-secondary list carte" style={{ width: "85%", height: '5%' }}>
                 <div className="mx-3 d-flex align-items-center justify-content-between w-100">
-                    <select class="form-select w-25" id='selectType' onChange={() => {
+                    <select class="form-select w-25" id='selectType' value={type} disabled={isDetails} onChange={() => {
                         setType(document.getElementById('selectType').value)
                         if (document.getElementById('selectType').value == "Type") {
                             setDisablePrixAchat(true); setDisablePrixVente(true)
@@ -306,7 +445,7 @@ function PieceAjout(props) {
                     <div className="d-flex flex-column align-items-center w-100">
                         {rechercheResultGamme2.map((elem, index) => {
                             return (<>
-                                <div className="d-flex align-items-center bg-body-primary list carte my-1 justify-content-between" style={{ width: "85%", height: '15%' }}>
+                                <div className="d-flex align-items-center bg-body-primary list carte my-1 justify-content-between" style={{ width: "85%" }}>
                                     <div className="mx-3 d-flex align-items-center w-75">
                                         <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>{elem.id}</b></div>
                                         <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.libelle}</div>
@@ -359,13 +498,18 @@ function PieceAjout(props) {
                     <div className="d-flex flex-column align-items-center w-100">
                         {rechercheResultPiece2.map((elem, index) => {
                             return (<>
-                                <div className="d-flex align-items-center bg-body-primary list carte my-1 justify-content-between" style={{ width: "85%", height: '15%' }}>
+                                <div className="d-flex align-items-center bg-body-primary list carte my-1 justify-content-between" style={{ width: "85%" }}>
                                     <div className="mx-3 d-flex align-items-center w-75">
-                                        <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>{elem.id}</b></div>
-                                        <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.libelle}</div>
+                                        <div className="mx-3 border-end border-2 px-3 listId text-truncate" id={`id`+elem.id}>{elem.id}</div>
+                                        <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate" id={`libelle`+elem.id}>{elem.libelle}</div>
+                                        <form class="mx-3 border-end border-2 listLibelle text-truncate form-floating">
+                                            <input type="text" className="form-control w-100" id={`quantite`+elem.id} placeholder={'Quantité'} value={qteCompo} onChange={(event) => { setQteCompo(event.target.value) }} disabled={isDetails}></input>
+                                            <label for={`quantite`+elem.id}>Quantité</label>
+                                        </form>
+                                        <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>{elem.unite}</b></div>
                                     </div>
                                     {provenance !== "details" ? <div className="mx-3 w-25 d-flex justify-content-end">
-                                        <button onClick={() => { deleteListPiece(index) }} className="btn border border-2 mx-1 button bg-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                        <button onClick={() => { deleteListPiece(index,id,elem.id) }} className="btn border border-2 mx-1 button bg-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
                                             data-bs-title="Supprimer"><FontAwesomeIcon icon="fa-solid fa-trash" style={{ color: "#ffffff", }} /></button>
                                     </div> : ""}
                                 </div></>)
@@ -378,8 +522,8 @@ function PieceAjout(props) {
         <div className='flex-grow-1'>
             <div className="w-100 d-flex justify-content-center mt-5 anim">
                 {provenance === "add" ? <button className="btn border border-2 px-4 button bg-primary" type="button" style={{ color: "#ffffff", }} onClick={() => { add() }}><FontAwesomeIcon icon="fa-solid fa-plus" />&nbsp;&nbsp; Ajouter une pièce</button> : ""}
-                {/* {provenance === "update" ? <button className="btn border border-2 px-4 button bg-primary" type="button" style={{ color: "#ffffff", }} onClick={() => { update(id) }}><FontAwesomeIcon icon="fa-solid fa-pen-to-square" style={{ color: "#ffffff", }} />&nbsp;&nbsp; Modifier une pièce</button> : ""} */}
-                {/* {provenance === "details" ? "" : ""} */}
+                {provenance === "update" ? <button className="btn border border-2 px-4 button bg-primary" type="button" style={{ color: "#ffffff", }} onClick={() => { update(id) }}><FontAwesomeIcon icon="fa-solid fa-pen-to-square" style={{ color: "#ffffff", }} />&nbsp;&nbsp; Modifier une pièce</button> : ""}
+                {provenance === "details" ? "" : ""}
             </div>
         </div>
     </>
