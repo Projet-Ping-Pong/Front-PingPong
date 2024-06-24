@@ -100,8 +100,8 @@ function Liste(props) {
                                             <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>{elem.id}</b></div>
                                             <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.libelle}</div>
                                             <div className="mx-3 border-end border-2 px-3 listQte text-truncate">{elem.temps}</div>
-                                            <div className="mx-3 border-end border-2 px-3 listUnite text-truncate">{elem.poste}</div>
-                                            <div className="mx-3 border-end border-2 px-3 listUnite text-truncate">{elem.machine}</div>
+                                            <div className="mx-3 border-end border-2 px-3 listUnite text-truncate">{elem.poste_lib}</div>
+                                            <div className="mx-3 border-end border-2 px-3 listUnite text-truncate">{elem.machine_lib}</div>
                                             <div className="mx-3 border-end border-2 px-3 listUnite text-truncate">{elem.date}</div>
                                         </>
                                     }

@@ -277,7 +277,7 @@ function Operation(props) {
                 </form>
             </div>
         </div>
-        <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Postes de travails</h1></div>
+        <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Postes de travail</h1></div>
         {provenance !== "details" ? <>
             <div className="d-flex flex-column align-items-center w-100" style={{ width: "85%", paddingTop: "50px" }}>
                 <div className="d-flex align-items-center justify-content-between" style={{ width: "85%", height: '5%' }}>

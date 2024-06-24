@@ -102,6 +102,7 @@ function Gamme(props) {
                         }
 
                         if(data.responsable != undefined && data.responsable != null){
+                            console.log(data.responsable);
                             fetch(`${process.env.REACT_APP_URL}/utilisateur/getId`,
                                 {
                                     method: 'POST',

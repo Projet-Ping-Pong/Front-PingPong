@@ -25,6 +25,9 @@ function App() {
 
   useEffect(() => {
     if (isExpired) {
+      if(localStorage.getItem("Token") != ""){
+        window.location.href = '/login';
+      }
       localStorage.setItem("Token", "")
     }
   })

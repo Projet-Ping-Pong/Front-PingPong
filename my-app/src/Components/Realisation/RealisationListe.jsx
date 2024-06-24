@@ -75,72 +75,9 @@ function RealisationListe(props) {
                     setStatutToast('error')
                     new Toast(document.querySelector('.toast')).show()
                 } else {
-                    var tabListeRea = []
-                    data.forEach(element => {
-                        var posteLibelle = ""
-                        var machineLibelle = ""
-                        if(element.id_poste != null){
-                            fetch(`${process.env.REACT_APP_URL}/poste/getId`,
-                                {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
-                                    body: JSON.stringify({
-                                        id: element.id_poste,
-                                    })
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.erreur != null) {
-                                        // Erreur, phrase définie dans le back
-                                        setInfoToast(data.erreur)
-                                        setStatutToast('error')
-                                        new Toast(document.querySelector('.toast')).show()
-                                    } else {
-                                        console.log(data.libelle);
-                                        setPosteLibelle(data.libelle)
-                                    }
-                                })
-                                .catch(error => {
-                                    console.log(error)
-                                });
-                        }
-                        if(element.id_machine != null){
-                            fetch(`${process.env.REACT_APP_URL}/machine/getId`,
-                                {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
-                                    body: JSON.stringify({
-                                        id: element.id_machine,
-                                    })
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.erreur != null) {
-                                        // Erreur, phrase définie dans le back
-                                        setInfoToast(data.erreur)
-                                        setStatutToast('error')
-                                        new Toast(document.querySelector('.toast')).show()
-                                    } else {
-                                        setMachineLibelle(data.libelle)
-                                    }
-                                })
-                                .catch(error => {
-                                    console.log(error)
-                                });
-                        }
-                        tabListeRea = [...tabListeRea,{
-                            id: element.id,
-                            libelle: element.libelle,
-                            temps: element.temps,
-                            date: element.date,
-                            poste: posteLibelle,
-                            machine: machineLibelle,
-                            id_uti: element.id_uti,
-                            id_piece: element.id_piece,
-                        }]
-                    });
-                    console.log(tabListeRea);
-                    setRechercheResult(tabListeRea)
+
+                    console.log(data);
+                    setRechercheResult(data)
                 }
             })
             .catch(error => {

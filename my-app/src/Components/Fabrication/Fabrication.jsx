@@ -18,6 +18,9 @@ function Fabrication(props) {
     const [rechercheResultPoste, setRechercheResultPoste] = useState([])
     const [rechercheResultPosteAff, setRechercheResultPosteAff] = useState([])
 
+    const [rechercheResultMachine, setRechercheResultMachine] = useState([])
+    const [rechercheResultMachineAff, setRechercheResultMachineAff] = useState([])
+
     const [rechercheOpResult, setRechercheOpResult] = useState([])
 
     const [tabRea, setTabRea] = useState([])
@@ -136,6 +139,39 @@ function Fabrication(props) {
         }
     }
 
+    const rechercheMachine = (rechercheLib) => {
+        if (rechercheLib !== "") {
+            fetch(`${process.env.REACT_APP_URL}/postemachine/rechLibelle`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
+                    body: JSON.stringify({
+                        id_poste: rechercheResultPosteAff[0].id,
+                        libelle: rechercheLib,
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.erreur != null) {
+                        // Erreur, phrase définie dans le back
+                        setInfoToast(data.erreur)
+                        setStatutToast('error')
+                        new Toast(document.querySelector('.toast')).show()
+                    } else {
+                        setRechercheResultMachine(data)
+                    }
+
+                })
+                .catch(error => {
+                    setInfoToast(error)
+                    setStatutToast('error')
+                    new Toast(document.querySelector('.toast')).show()
+                });
+        } else {
+            setRechercheResultMachine([])
+        }
+    }
+
     function addListePoste(id, libelle, index) {
 
         const tab = [{
@@ -146,6 +182,19 @@ function Fabrication(props) {
         document.getElementById("recherchePoste" + index).setAttribute("id_poste",id)
         setRechercheResultPosteAff(tab)
         setRechercheResultPoste([])
+
+    }
+
+    function addListeMachine(id, libelle, index) {
+
+        const tab = [{
+            id: id,
+            libelle: libelle
+        }]
+        document.getElementById("rechercheMachine" + index).value = libelle;
+        document.getElementById("rechercheMachine" + index).setAttribute("id_machine",id)
+        setRechercheResultMachineAff(tab)
+        setRechercheResultMachine([])
 
     }
 
@@ -264,10 +313,24 @@ function Fabrication(props) {
                                             </div>
                                         </div>
                                     </form>
-                                    <form className="mx-3 d-flex align-items-center justify-content-between form-floating" style={{ width: "20%" }}>
-                                        <input type="text" className="form-control w-100" id={"rechercheMachine" + index} id_machine="" placeholder={'Machine'}></input>
+
+                                    <form className="mx-3 d-flex flex-wrap align-items-center justify-content-between form-floating" style={{ width: "20%" }}>
+                                        <input type="text" className="form-control w-100" id={"rechercheMachine" + index} id_machine="" placeholder={'Machine'} onChange={debounce((event) => { rechercheMachine(event.target.value) }, 500)}></input> {/* disabled={document.getElementById("recherchePoste" + index).indexHTML?false:true} */}
                                         <label for={"rechercheMachine" + index}>Machine</label>
+                                        <div className="d-flex flex-column align-items-center w-100">
+                                            <div className="d-flex align-items-center justify-content-between" style={{ width: "100%" }}>
+                                                {rechercheResultMachine.length > 0 && <div className="input-group anim border border-2">
+                                                    {rechercheResultMachine.map((elem) => {
+                                                        return (<>
+                                                            <div onClick={() => { addListeMachine(elem.id, elem.libelle, index) }} className="d-flex align-items-center my-1 mx-2 rechercheListe w-100">
+                                                                <div className='mx-2'><b>{elem.id}</b> - {elem.libelle}</div>
+                                                            </div></>)
+                                                    })}
+                                                </div>}
+                                            </div>
+                                        </div>
                                     </form>
+                                
                                     <form className="mx-3 d-flex align-items-center justify-content-between form-floating" style={{ width: "20%" }}>
                                         <input type="text" className="form-control w-100" id={"rechercheTemps" + index} placeholder={'Temps'}></input>
                                         <label for={"rechercheTemps" + index}>Temps</label>
