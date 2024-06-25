@@ -145,8 +145,8 @@ function MachineList(props) {
     return (<>
         <ToastAff infoToast={infoToast} statutToast={statutToast}></ToastAff>
         <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Liste des Machines</h1></div>
-        <Recherche recherche={(rechercheLib) => recherche(rechercheLib)} prov="machine"></Recherche>
-        <Liste rechercheResult={rechercheResult} deleteElem={(id) => deleteElem(id)} prov="machine"></Liste>
+        <Recherche recherche={(rechercheLib) => recherche(rechercheLib)} prov="machine" droit={props.droit}></Recherche>
+        <Liste rechercheResult={rechercheResult} deleteElem={(id) => deleteElem(id)} prov="machine" droit={props.droit}></Liste>
     </>
     );
 }

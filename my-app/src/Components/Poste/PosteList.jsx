@@ -136,8 +136,8 @@ function PosteList(props) {
     return (<>
         <ToastAff infoToast={infoToast} statutToast={statutToast}></ToastAff>
         <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Liste des Postes</h1></div>
-        <Recherche recherche={(rechercheLib)=>recherche(rechercheLib)} prov="poste"></Recherche>
-        <Liste rechercheResult={rechercheResult} deleteElem={(id) => deleteElem(id)} prov="poste"></Liste>
+        <Recherche recherche={(rechercheLib)=>recherche(rechercheLib)} prov="poste" droit={props.droit}></Recherche>
+        <Liste rechercheResult={rechercheResult} deleteElem={(id) => deleteElem(id)} prov="poste" droit={props.droit}></Liste>
     </>
     );
 }

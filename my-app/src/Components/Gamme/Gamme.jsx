@@ -27,6 +27,13 @@ function Gamme(props) {
     const [rechercheResultResponsableAff, setRechercheResultResponsableAff] = useState([])
 
     useEffect(() => {
+        if(!provenance){
+            window.location.href = '/accueil';
+        }
+        sessionStorage.removeItem("Provenance")
+    },[])
+
+    useEffect(() => {
         const search = window.location.search; // returns the URL query String
         const params = new URLSearchParams(search);
         const IdFromURL = params.get('id');

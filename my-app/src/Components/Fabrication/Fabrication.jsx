@@ -109,11 +109,12 @@ function Fabrication(props) {
 
     const recherchePoste = (rechercheLib) => {
         if (rechercheLib !== "") {
-            fetch(`${process.env.REACT_APP_URL}/poste/rechLibelle`,
+            fetch(`${process.env.REACT_APP_URL}/poste/rechPosteByQual`,
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
                     body: JSON.stringify({
+                        id_uti: props.utiInfo.id_uti,
                         libelle: rechercheLib,
                     })
                 })

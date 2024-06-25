@@ -16,6 +16,16 @@ function Accueil(props) {
       new Toast(document.querySelector('.toast')).show()
     }
   })
+
+  useEffect(() => {
+    if (localStorage.getItem("Toast") === "erreurDroit") {
+        localStorage.setItem("Toast", "")
+        setInfoToast("Vous n'avez pas les droits nécessaires pour acceder à cette page")
+        setStatutToast('error')
+        new Toast(document.querySelector('.toast')).show()
+    }
+})
+
   return (<>
     <ToastAff infoToast={infoToast} statutToast={statutToast}></ToastAff>
     <div className='flex-grow-1 d-flex'>

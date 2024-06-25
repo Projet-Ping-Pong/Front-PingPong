@@ -144,8 +144,8 @@ function OperationList(props) {
     return (<>
         <ToastAff infoToast={infoToast} statutToast={statutToast}></ToastAff>
         <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Liste des Opérations</h1></div>
-        <Recherche recherche={(rechercheLib) => recherche(rechercheLib)} prov="operation"></Recherche>
-        <Liste rechercheResult={rechercheResult} deleteElem={(id) => deleteElem(id)} prov="operation"></Liste>
+        <Recherche recherche={(rechercheLib) => recherche(rechercheLib)} prov="operation" droit={props.droit}></Recherche>
+        <Liste rechercheResult={rechercheResult} deleteElem={(id) => deleteElem(id)} prov="operation" droit={props.droit}></Liste>
     </>
     );
 }

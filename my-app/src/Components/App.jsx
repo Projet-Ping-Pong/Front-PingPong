@@ -16,21 +16,41 @@ import GammeList from './Gamme/GammeList';
 import Gamme from './Gamme/Gamme';
 import Fabrication from './Fabrication/Fabrication';
 import RealisationListe from './Realisation/RealisationListe';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useJwt } from "react-jwt";
 
 function App() {
 
   const { decodedToken, isExpired } = useJwt(localStorage.getItem("Token"));
+  const [ utiInfo, setUtiInfo ] = useState({})
+  const [ utiDroit, setUtiDroit ] = useState("")
 
   useEffect(() => {
+    setUtiInfo({
+      id_uti: decodedToken?decodedToken.id_user:null,
+      nom_uti: decodedToken?decodedToken.name_user:null,
+      droits: decodedToken?decodedToken.droits:null
+    })
+    if(decodedToken !== null){
+      decodedToken.droits.forEach(element => {
+        if(element.libelle === "Atelier" && element.niveau === 1){
+          setUtiDroit("Atelier")
+        }
+        if(element.libelle === "Atelier" && element.niveau === 2){
+          setUtiDroit("Resp_Atelier")
+        }
+        if(element.libelle === "Admin"){
+          setUtiDroit("Admin")
+        }
+      });
+    }
     if (isExpired) {
       if(localStorage.getItem("Token") != ""){
         window.location.href = '/login';
       }
       localStorage.setItem("Token", "")
     }
-  })
+  },[decodedToken])
 
 
   return (
@@ -41,19 +61,19 @@ function App() {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Accueil />} />
-              <Route path="/accueil" element={<Accueil />} />
-              <Route path="/pieces" element={<PieceList />} />
-              <Route path="/piecesCRUD" element={<Piece />} />
-              <Route path="/machines" element={<MachineList />} />
-              <Route path="/machinesCRUD" element={<Machine />} />
-              <Route path="/postes" element={<PosteList />} />
-              <Route path="/postesCRUD" element={<Poste />} />
-              <Route path="/operations" element={<OperationList />} />
-              <Route path="/operationsCRUD" element={<Operation />} />
-              <Route path="/gammes" element={<GammeList />} />
-              <Route path="/gammesCRUD" element={<Gamme />} />
-              <Route path="/fabrications" element={<Fabrication />} />
-              <Route path="/realisations" element={<RealisationListe />} />
+              <Route path="/accueil" element={<Accueil uti={utiInfo} droit={utiDroit}/>} />
+              <Route path="/pieces" element={<PieceList uti={utiInfo} droit={utiDroit}/>} />
+              <Route path="/piecesCRUD" element={<Piece uti={utiInfo} droit={utiDroit}/>} />
+              <Route path="/machines" element={<MachineList uti={utiInfo} droit={utiDroit}/>} />
+              <Route path="/machinesCRUD" element={<Machine uti={utiInfo} droit={utiDroit}/>} />
+              <Route path="/postes" element={<PosteList uti={utiInfo} droit={utiDroit}/>} />
+              <Route path="/postesCRUD" element={<Poste uti={utiInfo} droit={utiDroit}/>} />
+              <Route path="/operations" element={<OperationList uti={utiInfo} droit={utiDroit}/>} />
+              <Route path="/operationsCRUD" element={<Operation uti={utiInfo} droit={utiDroit}/>} />
+              <Route path="/gammes" element={<GammeList uti={utiInfo} droit={utiDroit}/>} />
+              <Route path="/gammesCRUD" element={<Gamme uti={utiInfo} droit={utiDroit}/>} />
+              <Route path="/fabrications" element={<Fabrication uti={utiInfo} droit={utiDroit}/>} />
+              <Route path="/realisations" element={<RealisationListe uti={utiInfo} droit={utiDroit}/>} />
             </Routes>
           </BrowserRouter>
           <Footer />

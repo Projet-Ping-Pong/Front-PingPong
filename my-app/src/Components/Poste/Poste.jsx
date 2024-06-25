@@ -24,6 +24,13 @@ function Poste(props) {
     const [rechercheResult2, setRechercheResult2] = useState([])
 
     useEffect(() => {
+        if(!provenance){
+            window.location.href = '/accueil';
+        }
+        sessionStorage.removeItem("Provenance")
+    },[])
+
+    useEffect(() => {
         const search = window.location.search;
         const params = new URLSearchParams(search);
         const IdFromURL = params.get('id');

@@ -144,8 +144,8 @@ function GammeList(props) {
     return (<>
         <ToastAff infoToast={infoToast} statutToast={statutToast}></ToastAff>
         <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Liste des Gammes</h1></div>
-        <Recherche recherche={(rechercheLib) => recherche(rechercheLib)} prov="gamme"></Recherche>
-        <Liste rechercheResult={rechercheResult} deleteElem={(id) => deleteElem(id)} prov="gamme"></Liste>
+        <Recherche recherche={(rechercheLib) => recherche(rechercheLib)} prov="gamme" droit={props.droit}></Recherche>
+        <Liste rechercheResult={rechercheResult} deleteElem={(id) => deleteElem(id)} prov="gamme" droit={props.droit}></Liste>
     </>
     );
 }
