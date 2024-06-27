@@ -35,6 +35,7 @@ function GammeList(props) {
             setStatutToast('success')
             new Toast(document.querySelector('.toast')).show()
         }
+        props.verifyDroit("Atelier")
     })
 
     useEffect(() => {

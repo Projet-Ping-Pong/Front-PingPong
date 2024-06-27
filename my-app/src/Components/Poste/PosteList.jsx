@@ -16,25 +16,26 @@ function PosteList(props) {
 
     const [infoToast, setInfoToast] = useState('')
     const [statutToast, setStatutToast] = useState('')
-    
+
     useEffect(() => {
         getAll();
     }, [])
 
     useEffect(() => {
         if (localStorage.getItem("Toast") === "success") {
-          localStorage.setItem("Toast", "")
-          setInfoToast("Poste créé avec succès")
-          setStatutToast('success')
-          new Toast(document.querySelector('.toast')).show()
+            localStorage.setItem("Toast", "")
+            setInfoToast("Poste créé avec succès")
+            setStatutToast('success')
+            new Toast(document.querySelector('.toast')).show()
         }
         if (localStorage.getItem("Toast") === "successUpdate") {
             localStorage.setItem("Toast", "")
             setInfoToast("Poste modifié avec succès")
             setStatutToast('success')
             new Toast(document.querySelector('.toast')).show()
-          }
-      })
+        }
+        props.verifyDroit("Atelier")
+    })
 
     useEffect(() => {
         if (rechercheInput !== "" || rechercheInput !== null) {
@@ -95,7 +96,7 @@ function PosteList(props) {
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
                 })
                 .then(response => response.json())
-                .then(() => { 
+                .then(() => {
                     getAll()
                     setInfoToast("Poste supprimé avec succès")
                     setStatutToast('success')
@@ -136,7 +137,7 @@ function PosteList(props) {
     return (<>
         <ToastAff infoToast={infoToast} statutToast={statutToast}></ToastAff>
         <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Liste des Postes</h1></div>
-        <Recherche recherche={(rechercheLib)=>recherche(rechercheLib)} prov="poste" droit={props.droit}></Recherche>
+        <Recherche recherche={(rechercheLib) => recherche(rechercheLib)} prov="poste" droit={props.droit}></Recherche>
         <Liste rechercheResult={rechercheResult} deleteElem={(id) => deleteElem(id)} prov="poste" droit={props.droit}></Liste>
     </>
     );

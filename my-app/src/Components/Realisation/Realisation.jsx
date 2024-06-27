@@ -27,6 +27,10 @@ function Realisation(props) {
 
 
     useEffect(() => {
+        props.verifyDroit("Atelier")
+    })
+
+    useEffect(() => {
         const search = window.location.search;
         const params = new URLSearchParams(search);
         const IdFromURL = params.get('id');

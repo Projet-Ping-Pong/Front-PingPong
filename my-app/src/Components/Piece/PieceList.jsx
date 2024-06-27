@@ -16,7 +16,7 @@ function PieceList(props) {
 
   const [infoToast, setInfoToast] = useState('')
   const [statutToast, setStatutToast] = useState('')
-
+  
   useEffect(() => {
     if (localStorage.getItem("Toast") === "success") {
       localStorage.setItem("Toast", "")
@@ -31,6 +31,7 @@ function PieceList(props) {
       setStatutToast('success')
       new Toast(document.querySelector('.toast')).show()
     }
+    props.verifyDroit("Atelier")
   })
 
   useEffect(() => {

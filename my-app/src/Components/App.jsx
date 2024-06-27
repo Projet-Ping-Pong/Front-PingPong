@@ -40,7 +40,7 @@ function App() {
           setUtiService("Atelier")
         }
         if(element.libelle === "Atelier" && element.niveau === 2){
-          setUtiDroit("Resp_Atelier")
+          setUtiDroit("RespAtelier")
           setUtiService("Atelier")
         }
         if(element.libelle === "Admin"){
@@ -60,6 +60,16 @@ function App() {
     }
   },[decodedToken])
 
+  function verifyDroit(service){
+    if(utiDroit){
+      if(service === "Atelier" && (utiDroit !== "Atelier" && utiDroit !== "RespAtelier")){
+        window.location.href = '/accueil';
+      }
+      if(!service === "Commerce" && utiDroit !== "Commerce"){
+        window.location.href = '/accueil';
+      }
+    }
+  }
 
   return (
     <>
@@ -68,21 +78,21 @@ function App() {
           <NavBar service={utiService}/>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Accueil uti={utiInfo} droit={utiDroit} service={utiService}/>} />
-              <Route path="/accueil" element={<Accueil uti={utiInfo} droit={utiDroit} service={utiService}/>} />
-              <Route path="/pieces" element={<PieceList uti={utiInfo} droit={utiDroit}/>} />
-              <Route path="/piecesCRUD" element={<Piece uti={utiInfo} droit={utiDroit}/>} />
-              <Route path="/machines" element={<MachineList uti={utiInfo} droit={utiDroit}/>} />
-              <Route path="/machinesCRUD" element={<Machine uti={utiInfo} droit={utiDroit}/>} />
-              <Route path="/postes" element={<PosteList uti={utiInfo} droit={utiDroit}/>} />
-              <Route path="/postesCRUD" element={<Poste uti={utiInfo} droit={utiDroit}/>} />
-              <Route path="/operations" element={<OperationList uti={utiInfo} droit={utiDroit}/>} />
-              <Route path="/operationsCRUD" element={<Operation uti={utiInfo} droit={utiDroit}/>} />
-              <Route path="/gammes" element={<GammeList uti={utiInfo} droit={utiDroit}/>} />
-              <Route path="/gammesCRUD" element={<Gamme uti={utiInfo} droit={utiDroit}/>} />
-              <Route path="/fabrications" element={<Fabrication uti={utiInfo} droit={utiDroit}/>} />
-              <Route path="/realisations" element={<RealisationListe uti={utiInfo} droit={utiDroit}/>} />
-              <Route path="/realisationsCRUD" element={<Realisation uti={utiInfo} droit={utiDroit}/>} />
+              <Route path="/"                   element={<Accueil uti={utiInfo}           droit={utiDroit}    service={utiService} />} />
+              <Route path="/accueil"            element={<Accueil uti={utiInfo}           droit={utiDroit}    service={utiService} />} />
+              <Route path="/pieces"             element={<PieceList uti={utiInfo}         droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+              <Route path="/piecesCRUD"         element={<Piece uti={utiInfo}             droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+              <Route path="/machines"           element={<MachineList uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+              <Route path="/machinesCRUD"       element={<Machine uti={utiInfo}           droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+              <Route path="/postes"             element={<PosteList uti={utiInfo}         droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+              <Route path="/postesCRUD"         element={<Poste uti={utiInfo}             droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+              <Route path="/operations"         element={<OperationList uti={utiInfo}     droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+              <Route path="/operationsCRUD"     element={<Operation uti={utiInfo}         droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+              <Route path="/gammes"             element={<GammeList uti={utiInfo}         droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+              <Route path="/gammesCRUD"         element={<Gamme uti={utiInfo}             droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+              <Route path="/fabrications"       element={<Fabrication uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+              <Route path="/realisations"       element={<RealisationListe uti={utiInfo}  droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+              <Route path="/realisationsCRUD"   element={<Realisation uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
             </Routes>
           </BrowserRouter>
           <Footer />

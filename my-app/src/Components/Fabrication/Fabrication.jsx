@@ -32,7 +32,8 @@ function Fabrication(props) {
             setDisableMachine(false)
         }else{
             setDisableMachine(true)
-        }
+        } 
+        props.verifyDroit("Atelier")
     })
 
     useEffect(() => {

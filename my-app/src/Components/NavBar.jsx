@@ -72,10 +72,10 @@ function NavBar(props) {
                                     <a href='/devis' className='nav-link'><button className="nav-link active border-start px-4 border-2 buttonnav" aria-current="page"><FontAwesomeIcon icon="fa-solid fa-file" className='me-3' />Devis</button></a>
                                 </li>
                                 <li className="nav-item">
-                                    <a href='/commandesventes' className='nav-link'><button className="nav-link active border-start px-4 border-2 buttonnav" aria-current="page"><FontAwesomeIcon icon="fa-solid fa-list-check" className='me-3' />Commande de ventes</button></a>
+                                    <a href='/commandesventes' className='nav-link'><button className="nav-link active border-start px-4 border-2 buttonnav" aria-current="page"><FontAwesomeIcon icon="fa-solid fa-cart-flatbed" className='me-3' />Commande de ventes</button></a>
                                 </li>
                                 <li className="nav-item">
-                                    <a href='/commandesachats' className='nav-link'><button className="nav-link active border-start px-4 border-2 buttonnav" aria-current="page"><FontAwesomeIcon icon="fa-solid fa-gear" className='me-3' />Commandes d'achats</button></a>
+                                    <a href='/commandesachats' className='nav-link'><button className="nav-link active border-start px-4 border-2 buttonnav" aria-current="page"><FontAwesomeIcon icon="fa-solid fa-cart-plus" className='me-3' />Commandes d'achats</button></a>
                                 </li>
                                 <li className="nav-item">
                                     <a href='/clientsfournisseurs' className='nav-link'><button className="nav-link active border-start px-4 border-2 buttonnav" aria-current="page"><FontAwesomeIcon icon="fa-solid fa-users" className='me-3' />Clients / Fournisseurs</button></a>

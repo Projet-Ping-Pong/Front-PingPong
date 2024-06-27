@@ -16,7 +16,6 @@ function Poste(props) {
     const [infoToast, setInfoToast] = useState("")
     const [statutToast, setStatutToast] = useState("")
 
-
     const [isDetails, setIsDetails] = useState(false)
 
     const [rechercheResult, setRechercheResult] = useState([])
@@ -28,6 +27,7 @@ function Poste(props) {
             window.location.href = '/accueil';
         }
         sessionStorage.removeItem("Provenance")
+        props.verifyDroit("Atelier")
     },[])
 
     useEffect(() => {

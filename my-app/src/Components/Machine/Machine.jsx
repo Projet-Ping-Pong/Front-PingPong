@@ -19,6 +19,7 @@ function Machine(props) {
             window.location.href = '/accueil';
         }
         sessionStorage.removeItem("Provenance")
+        props.verifyDroit("Atelier")
     },[])
 
     useEffect(() => {

@@ -19,19 +19,20 @@ function RealisationListe(props) {
 
     const [infoToast, setInfoToast] = useState('')
     const [statutToast, setStatutToast] = useState('')
-    
+
     useEffect(() => {
         getAll();
     }, [])
 
     useEffect(() => {
         if (localStorage.getItem("Toast") === "success") {
-          localStorage.setItem("Toast", "")
-          setInfoToast("Réalisations créées avec succès")
-          setStatutToast('success')
-          new Toast(document.querySelector('.toast')).show()
+            localStorage.setItem("Toast", "")
+            setInfoToast("Réalisations créées avec succès")
+            setStatutToast('success')
+            new Toast(document.querySelector('.toast')).show()
         }
-      })
+        props.verifyDroit("Atelier")
+    })
 
     useEffect(() => {
         if (rechercheInput !== "" || rechercheInput !== null) {
@@ -114,7 +115,7 @@ function RealisationListe(props) {
     return (<>
         <ToastAff infoToast={infoToast} statutToast={statutToast}></ToastAff>
         <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Liste des Réalisations</h1></div>
-        <Recherche recherche={(rechercheLib)=>recherche(rechercheLib)} prov="realisation"></Recherche>
+        <Recherche recherche={(rechercheLib) => recherche(rechercheLib)} prov="realisation"></Recherche>
         <Liste rechercheResult={rechercheResult} prov="realisation"></Liste>
     </>
     );
