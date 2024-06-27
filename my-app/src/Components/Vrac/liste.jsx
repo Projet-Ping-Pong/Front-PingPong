@@ -4,10 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function Liste(props) {
 
-    useEffect(() => {
-        console.log(props.droit);
-    })
-
     function buttonChangeProv(id) {
         if (props.prov === "machine") {
             return window.location.href = `/machinesCRUD?id=${id}`;
@@ -23,6 +19,9 @@ function Liste(props) {
         }
         if (props.prov === "piece") {
             return window.location.href = `/piecesCRUD?id=${id}`;
+        }
+        if (props.prov === "realisation") {
+            return window.location.href = `/realisationsCRUD?id=${id}`;
         }
     }
 
@@ -58,6 +57,32 @@ function Liste(props) {
                 <div className="mx-3 border-end border-2 px-3 listUnite text-truncate"><b>Machine</b></div>
                 <div className="mx-3 border-end border-2 px-3 listUnite text-truncate"><b>Date</b></div>
             </>
+        }
+    }
+
+    function gereBouton(elem){
+        if (props.prov !== "realisation" && props.prov !== "gamme" && props.droit !== "Atelier") {
+            return (
+                <>
+                    <button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "details") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Détails"><FontAwesomeIcon icon="fa-solid fa-magnifying-glass" style={{ color: "#ffffff", }} /></button>
+                    <button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "update") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Modifier"><FontAwesomeIcon icon="fa-solid fa-pen-to-square" style={{ color: "#ffffff", }} /></button>
+                    <button onClick={() => { props.deleteElem(elem.id) }} className="btn border border-2 mx-1 button bg-danger" type="button"><FontAwesomeIcon icon="fa-solid fa-trash" style={{ color: "#ffffff", }} /></button>
+                </>
+            )
+        } else if(props.prov === "gamme" && props.uti_id.id_uti == elem.responsable){
+            return (
+                <>
+                    <button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "details") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Détails"><FontAwesomeIcon icon="fa-solid fa-magnifying-glass" style={{ color: "#ffffff", }} /></button>
+                    <button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "update") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Modifier"><FontAwesomeIcon icon="fa-solid fa-pen-to-square" style={{ color: "#ffffff", }} /></button>
+                    <button onClick={() => { props.deleteElem(elem.id) }} className="btn border border-2 mx-1 button bg-danger" type="button"><FontAwesomeIcon icon="fa-solid fa-trash" style={{ color: "#ffffff", }} /></button>
+                </>
+            )
+        } else {
+            return (
+                <>
+                    <button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "details") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Détails"><FontAwesomeIcon icon="fa-solid fa-magnifying-glass" style={{ color: "#ffffff", }} /></button>
+                </>
+            )
         }
     }
 
@@ -107,7 +132,7 @@ function Liste(props) {
                                             <div className="mx-3 border-end border-2 px-3 listQte text-truncate">{elem.temps}</div>
                                             <div className="mx-3 border-end border-2 px-3 listUnite text-truncate">{elem.poste_lib}</div>
                                             <div className="mx-3 border-end border-2 px-3 listUnite text-truncate">{elem.machine_lib}</div>
-                                            <div className="mx-3 border-end border-2 px-3 listUnite text-truncate">{elem.date}</div>
+                                            <div className="mx-3 border-end border-2 px-3 listUnite text-truncate">{new Date(elem.date).toLocaleDateString()}</div>
                                         </>
                                     }
                                 </div>
@@ -131,16 +156,8 @@ function Liste(props) {
                                                 data-bs-title="Fabriquer"><FontAwesomeIcon icon="fa-solid fa-screwdriver-wrench" style={{ color: "#ffffff", }} /></button>
                                         </>
                                     }
-                                    {
-                                        props.prov !== "realisation" && props.droit !== "Atelier" ? 
-                                        <>
-                                            <button onClick={() => {buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "details")}} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Détails"><FontAwesomeIcon icon="fa-solid fa-magnifying-glass" style={{ color: "#ffffff", }} /></button>
-                                            <button onClick={() => {buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "update")}} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Modifier"><FontAwesomeIcon icon="fa-solid fa-pen-to-square" style={{ color: "#ffffff", }} /></button>
-                                            <button onClick={() => {props.deleteElem(elem.id)}} className="btn border border-2 mx-1 button bg-danger" type="button"><FontAwesomeIcon icon="fa-solid fa-trash" style={{ color: "#ffffff", }} /></button>
-                                        </> 
-                                        : 
-                                            <button onClick={() => {buttonChangeProv(elem.id);sessionStorage.setItem("Provenance", "details")}}className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Détails"><FontAwesomeIcon icon="fa-solid fa-magnifying-glass" style={{ color: "#ffffff", }} /></button>
-                                    }
+
+                                    {gereBouton(elem)}
                                 </div>
                             </div>
                         </>)

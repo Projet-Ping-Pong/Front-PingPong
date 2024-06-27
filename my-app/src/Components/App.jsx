@@ -18,12 +18,14 @@ import Fabrication from './Fabrication/Fabrication';
 import RealisationListe from './Realisation/RealisationListe';
 import { useEffect, useState } from 'react';
 import { useJwt } from "react-jwt";
+import Realisation from './Realisation/Realisation';
 
 function App() {
 
   const { decodedToken, isExpired } = useJwt(localStorage.getItem("Token"));
   const [ utiInfo, setUtiInfo ] = useState({})
   const [ utiDroit, setUtiDroit ] = useState("")
+  const [ utiService, setUtiService ] = useState("")
 
   useEffect(() => {
     setUtiInfo({
@@ -35,12 +37,18 @@ function App() {
       decodedToken.droits.forEach(element => {
         if(element.libelle === "Atelier" && element.niveau === 1){
           setUtiDroit("Atelier")
+          setUtiService("Atelier")
         }
         if(element.libelle === "Atelier" && element.niveau === 2){
           setUtiDroit("Resp_Atelier")
+          setUtiService("Atelier")
         }
         if(element.libelle === "Admin"){
           setUtiDroit("Admin")
+        }
+        if(element.libelle === "Commerce" && element.niveau === 1){
+          setUtiDroit("Commerce")
+          setUtiService("Commerce")
         }
       });
     }
@@ -57,11 +65,11 @@ function App() {
     <>
       {!localStorage.getItem("Token") ? <Login></Login> :
         <div className="d-flex flex-column" style={{ minHeight: "100vh" }}>
-          <NavBar />
+          <NavBar service={utiService}/>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Accueil />} />
-              <Route path="/accueil" element={<Accueil uti={utiInfo} droit={utiDroit}/>} />
+              <Route path="/" element={<Accueil uti={utiInfo} droit={utiDroit} service={utiService}/>} />
+              <Route path="/accueil" element={<Accueil uti={utiInfo} droit={utiDroit} service={utiService}/>} />
               <Route path="/pieces" element={<PieceList uti={utiInfo} droit={utiDroit}/>} />
               <Route path="/piecesCRUD" element={<Piece uti={utiInfo} droit={utiDroit}/>} />
               <Route path="/machines" element={<MachineList uti={utiInfo} droit={utiDroit}/>} />
@@ -74,6 +82,7 @@ function App() {
               <Route path="/gammesCRUD" element={<Gamme uti={utiInfo} droit={utiDroit}/>} />
               <Route path="/fabrications" element={<Fabrication uti={utiInfo} droit={utiDroit}/>} />
               <Route path="/realisations" element={<RealisationListe uti={utiInfo} droit={utiDroit}/>} />
+              <Route path="/realisationsCRUD" element={<Realisation uti={utiInfo} droit={utiDroit}/>} />
             </Routes>
           </BrowserRouter>
           <Footer />

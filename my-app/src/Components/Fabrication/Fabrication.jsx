@@ -23,7 +23,17 @@ function Fabrication(props) {
 
     const [rechercheOpResult, setRechercheOpResult] = useState([])
 
+    const [disbleMachine, setDisableMachine] = useState(true)
+
     const [tabRea, setTabRea] = useState([])
+
+    useEffect(() => {
+        if(rechercheResultPoste[0]){
+            setDisableMachine(false)
+        }else{
+            setDisableMachine(true)
+        }
+    })
 
     useEffect(() => {
         const search = window.location.search; // returns the URL query String
@@ -106,7 +116,6 @@ function Fabrication(props) {
             });
     }, [])
 
-
     const recherchePoste = (rechercheLib) => {
         if (rechercheLib !== "") {
             fetch(`${process.env.REACT_APP_URL}/poste/rechPosteByQual`,
@@ -114,7 +123,7 @@ function Fabrication(props) {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
                     body: JSON.stringify({
-                        id_uti: props.utiInfo.id_uti,
+                        id_uti: props.uti.id_uti,
                         libelle: rechercheLib,
                     })
                 })
@@ -200,21 +209,22 @@ function Fabrication(props) {
     }
 
     function finFab(){
-        var tabFinFab = []
+        let tabFinFab = []
         for (let i = 0; i < rechercheOpResult.length; i++) {
-            var rea = {}
+            let rea = {}
             const poste = parseInt(document.getElementById("recherchePoste"+i).getAttribute("id_poste"))
             const machine = parseInt(document.getElementById("rechercheMachine"+i).getAttribute("id_machine"))
             const temps = document.getElementById("rechercheTemps"+i).value
-            const date = document.getElementById("rechercheDate"+i).value
+            let date = document.getElementById("rechercheDate"+i).value
+            if(!date){ date = new Date().toISOString().slice(0, 10)}
             rea = {
                 libelle: rechercheOpResult[i].libelle,
                 temps: temps?temps:rechercheOpResult[i].temps,
-                date: date?date:rechercheOpResult[i].date,
+                date: date,
                 id_piece: idPiece,
                 id_poste: poste?poste:rechercheOpResult[i].id_poste,
                 id_machine : machine?machine:rechercheOpResult[i].id_machine,
-                id_uti : 1
+                id_uti : props.uti.id_uti
             }
             tabFinFab.push(rea)
         }
@@ -233,6 +243,9 @@ function Fabrication(props) {
                     setInfoToast(data.erreur)
                     setStatutToast('error')
                     new Toast(document.querySelector('.toast')).show()
+                }else{
+                    localStorage.setItem("Toast", "success")
+                    window.location.href = '/realisations';
                 }
             })
             .catch(error => {
@@ -265,12 +278,6 @@ function Fabrication(props) {
             <div className="d-flex flex-column align-items-center w-100 anim mb-5" style={{ paddingTop: "50px" }}><h1>Liste des opérations</h1></div>
             {rechercheOpResult.map((elem, index) => {
                 const collapse = `collapse${index}`
-                var tabRealisation = [...tabRea, {
-                    index: index,
-                    operation: elem,
-                    poste: "",
-                    machine: ""
-                }]
                 return (<>
                     <div className="d-flex flex-column align-items-center w-100">
                         <button className="btn d-flex align-items-center bg-body-secondary list carte my-1 justify-content-between" data-bs-toggle="collapse" data-bs-target={`#${collapse}`} aria-expanded="false" aria-controls="collapseExample" style={{ width: "85%", height: '15%' }}>
@@ -316,7 +323,7 @@ function Fabrication(props) {
                                     </form>
 
                                     <form className="mx-3 d-flex flex-wrap align-items-center justify-content-between form-floating" style={{ width: "20%" }}>
-                                        <input type="text" className="form-control w-100" id={"rechercheMachine" + index} id_machine="" placeholder={'Machine'} onChange={debounce((event) => { rechercheMachine(event.target.value) }, 500)}></input> {/* disabled={document.getElementById("recherchePoste" + index).indexHTML?false:true} */}
+                                        <input type="text" className="form-control w-100" id={"rechercheMachine" + index} id_machine="" placeholder={'Machine'} onChange={debounce((event) => { rechercheMachine(event.target.value) }, 500)} disabled={disbleMachine}></input> {/* disabled={document.getElementById("recherchePoste" + index).indexHTML?false:true} */}
                                         <label for={"rechercheMachine" + index}>Machine</label>
                                         <div className="d-flex flex-column align-items-center w-100">
                                             <div className="d-flex align-items-center justify-content-between" style={{ width: "100%" }}>
@@ -337,7 +344,7 @@ function Fabrication(props) {
                                         <label for={"rechercheTemps" + index}>Temps</label>
                                     </form>
                                     <form className="mx-3 d-flex align-items-center justify-content-between form-floating" style={{ width: "20%" }}>
-                                        <input type="text" className="form-control w-100" id={"rechercheDate" + index} placeholder={'Date'}></input>
+                                        <input type="date" className="form-control w-100" id={"rechercheDate" + index} placeholder={'Date'} pattern='(?:((?:0[1-9]|1[0-9]|2[0-9])\/(?:0[1-9]|1[0-2])|(?:30)\/(?!02)(?:0[1-9]|1[0-2])|31\/(?:0[13578]|1[02]))\/(?:19|20)[0-9]{2})'></input>
                                         <label for={"rechercheDate" + index}>Date</label>
                                     </form>
                                 </div>

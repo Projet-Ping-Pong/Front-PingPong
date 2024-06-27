@@ -25,7 +25,7 @@ function PieceAjout(props) {
     const [prixAchat, setPrixAchat] = useState()
     const [quantite, setQuantite] = useState()
     const [unite, setUnite] = useState("")
-    const [type, setType] = useState()
+    const [type, setType] = useState("0")
 
     const [qteCompo, setQteCompo] = useState()
 
@@ -36,11 +36,12 @@ function PieceAjout(props) {
     const [rechercheResultPiece2, setRechercheResultPiece2] = useState([])
 
     useEffect(() => {
-        if(!provenance){
+        typeListe()
+        if (!provenance) {
             window.location.href = '/accueil';
         }
         sessionStorage.removeItem("Provenance")
-    },[])
+    }, [])
 
     useEffect(() => {
         const search = window.location.search; // returns the URL query String
@@ -72,6 +73,7 @@ function PieceAjout(props) {
                         setQuantite(data.stock)
                         setUnite(data.unite)
                         setType(data.type)
+                        typeListe()
 
                         if (data.id_gamme != null) {
                             fetch(`${process.env.REACT_APP_URL}/gamme/getId`,
@@ -141,49 +143,49 @@ function PieceAjout(props) {
                 setStatutToast('error')
                 new Toast(document.querySelector('.toast')).show()
             } else {
-                var tabCompo = []
-                rechercheResultPiece2.forEach(element => {
-                    console.log(element);
-                    const id = document.getElementById(`id` + element.id).innerHTML
-                    const quantite = document.getElementById(`quantite` + element.id).value != "" ? document.getElementById(`quantite` + element.id).value : 0
-                    tabCompo = [...tabCompo, {
-                        id: parseInt(id),
-                        quantite: parseInt(quantite)
-                    }]
-                })
+                if (type != 3 && type != 4 && type != 0) {
+                    var tabCompo = []
+                    rechercheResultPiece2.forEach(element => {
+                        const id = document.getElementById(`id` + element.id).innerHTML
+                        const quantite = document.getElementById(`quantite` + element.id).value != "" ? document.getElementById(`quantite` + element.id).value : 0
+                        tabCompo = [...tabCompo, {
+                            id: parseInt(id),
+                            quantite: parseInt(quantite)
+                        }]
+                    })
 
-                fetch(`${process.env.REACT_APP_URL}/piece/add`,
-                    {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
-                        body: JSON.stringify({
-                            libelle: libelle,
-                            prix_vente: prixVente,
-                            prix_catalogue: prixAchat,
-                            stock: quantite,
-                            unite: unite,
-                            type: type,
-                            id_gamme: rechercheResultGamme2.length > 0 ? rechercheResultGamme2[0].id : null,
-                            listCompo: tabCompo
+                    fetch(`${process.env.REACT_APP_URL}/piece/add`,
+                        {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
+                            body: JSON.stringify({
+                                libelle: libelle,
+                                prix_vente: prixVente,
+                                prix_catalogue: prixAchat,
+                                stock: quantite,
+                                unite: unite,
+                                type: type,
+                                id_gamme: rechercheResultGamme2.length > 0 ? rechercheResultGamme2[0].id : null,
+                                listCompo: tabCompo
+                            })
                         })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.erreur != null) {
-                            // Erreur, phrase définie dans le back
-                            setInfoToast(data.erreur)
-                            setStatutToast('error')
-                            new Toast(document.querySelector('.toast')).show()
-                        } else {
-                            // Success, Vous êtes bien connecté(e)
-                            localStorage.setItem("Toast", "success")
-                            window.location.href = '/pieces'
-                        }
-                    })
-                    .catch(error => {
-                        console.log(error);
-                    });
-
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.erreur != null) {
+                                // Erreur, phrase définie dans le back
+                                setInfoToast(data.erreur)
+                                setStatutToast('error')
+                                new Toast(document.querySelector('.toast')).show()
+                            } else {
+                                // Success, Vous êtes bien connecté(e)
+                                localStorage.setItem("Toast", "success")
+                                window.location.href = '/pieces'
+                            }
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
+                }
             }
         }
 
@@ -191,15 +193,16 @@ function PieceAjout(props) {
 
     function update(id) {
         var tabCompo = []
-        rechercheResultPiece2.forEach(element => {
-            console.log(element);
-            const id = document.getElementById(`id` + element.id).innerHTML
-            const quantite = document.getElementById(`quantite` + element.id).value != "" ? document.getElementById(`quantite` + element.id).value : 0
-            tabCompo = [...tabCompo, {
-                id: parseInt(id),
-                quantite: parseInt(quantite)
-            }]
-        })
+        if (type != 3 && type != 4 && type != 0) {
+            rechercheResultPiece2.forEach(element => {
+                const id = document.getElementById(`id` + element.id).innerHTML
+                const quantite = document.getElementById(`quantite` + element.id).value != "" ? document.getElementById(`quantite` + element.id).value : 0
+                tabCompo = [...tabCompo, {
+                    id: parseInt(id),
+                    quantite: parseInt(quantite)
+                }]
+            })
+        }
 
         fetch(`${process.env.REACT_APP_URL}/piece/update/${id}`,
             {
@@ -207,8 +210,8 @@ function PieceAjout(props) {
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
                 body: JSON.stringify({
                     libelle: libelle,
-                    prix_vente: prixVente,
-                    prix_catalogue: prixAchat,
+                    prix_vente: prixVente ? prixVente : null,
+                    prix_catalogue: prixAchat ? prixAchat : null,
                     stock: quantite,
                     unite: unite,
                     type: type,
@@ -273,7 +276,7 @@ function PieceAjout(props) {
 
     const recherchePiece = (rechercheLib) => {
         if (rechercheLib !== "") {
-            fetch(`${process.env.REACT_APP_URL}/piece/rechLibelle`,
+            fetch(`${process.env.REACT_APP_URL}/piece/rechCompoLibelle`,
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
@@ -318,11 +321,12 @@ function PieceAjout(props) {
         }
     }
 
-    function addListePiece(id, libelle) {
+    function addListePiece(id, libelle, unite) {
         if (rechercheResultPiece2.find((rechercheResultPiece2) => rechercheResultPiece2.id === id) === undefined) {
             const tab = [...rechercheResultPiece2, {
                 id: id,
-                libelle: libelle
+                libelle: libelle,
+                unite: unite
             }]
             setRechercheResultPiece2(tab)
             setRechercheResultPiece([])
@@ -373,6 +377,34 @@ function PieceAjout(props) {
         }
     }
 
+    function typeListe() {
+        if (document.getElementById('selectType').value === "0") {
+            setDisablePrixAchat(true); setDisablePrixVente(true); setDisableGamme(true); setDisableCompo(true)
+        }
+        if (document.getElementById('selectType').value === "1") {
+            setDisablePrixAchat(true); setDisablePrixVente(false); setDisableGamme(false); setDisableCompo(false)
+            setPrixAchat("")
+        }
+        if (document.getElementById('selectType').value === "2") {
+            setDisablePrixAchat(true); setDisablePrixVente(true); setDisableGamme(false); setDisableCompo(false)
+            setPrixAchat(""); setPrixVente("")
+        }
+        if (document.getElementById('selectType').value === "3") {
+            setDisablePrixAchat(true); setDisablePrixVente(true); setDisableGamme(true); setDisableCompo(true)
+            setPrixAchat(""); setPrixVente("")
+        }
+        if (document.getElementById('selectType').value === "4") {
+            setDisablePrixAchat(false); setDisablePrixVente(true); setDisableGamme(true); setDisableCompo(true)
+            setPrixVente("")
+        }
+    }
+
+    function changeQte(event, index) {
+        const tabPiece = [...rechercheResultPiece2]
+        tabPiece[index].quantite = event.target.value
+        setRechercheResultPiece2(tabPiece)
+    }
+
     return (<>
         <ToastAff infoToast={infoToast} statutToast={statutToast}></ToastAff>
         {provenance === "add" ? <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Ajout des pièces</h1></div> : ""}
@@ -382,42 +414,50 @@ function PieceAjout(props) {
         <div className="d-flex flex-column align-items-center w-100" style={{ width: "85%", paddingTop: "50px" }}>
             <div className="d-flex flex-wrap bg-body-secondary list carte mb-3" style={{ width: "85%", height: '5%' }}>
                 <div className="mx-3 d-flex align-items-center justify-content-between w-100 mb-3">
-                    <input type="text" className="form-control w-25" placeholder={'Référence'} value={id} disabled={true}></input>
-                    <input type="text" className="form-control w-25" placeholder={'Prix de vente'} value={prixVente} onChange={(event) => { setPrixVente(event.target.value) }} disabled={disablePrixVente}></input>
-                    <input type="text" className="form-control w-25" placeholder={'Quantité'} value={quantite} onChange={(event) => { setQuantite(event.target.value) }} disabled={isDetails}></input>
+                    <form className="form-floating w-25">
+                        <input type="text" className="form-control" placeholder={'Référence'} value={id} disabled={true}></input>
+                        <label>Référence</label>
+                    </form>
+                    <div className="form-floating w-25 input-group anim">
+                        <div className="form-floating">
+                            <input type="number" className="form-control" placeholder={'Prix de vente'} value={prixVente} onChange={(event) => { setPrixVente(event.target.value) }} disabled={disablePrixVente}></input>
+                            <label>Prix de vente</label>
+                        </div>
+                        <span className="input-group-text" id="basic-addon1">€</span>
+                    </div>
+                    <form className="form-floating w-25">
+                        <input type="number" className="form-control" placeholder={'Quantité'} value={quantite} onChange={(event) => { setQuantite(event.target.value) }} disabled={isDetails}></input>
+                        <label>Quantité</label>
+                    </form>
                 </div>
                 <div className="mx-3 d-flex align-items-center justify-content-between w-100">
-                    <input type="text" className="form-control w-25" placeholder={'Libellé'} value={libelle} onChange={(event) => { setLibelle(event.target.value) }} disabled={isDetails}></input>
-                    <input type="text" className="form-control w-25" placeholder={'Prix catalogue'} value={prixAchat} onChange={(event) => { setPrixAchat(event.target.value) }} disabled={disablePrixAchat}></input>
-                    <input type="text" className="form-control w-25" placeholder={'Unité'} value={unite} onChange={(event) => { setUnite(event.target.value) }} disabled={isDetails}></input>
+                    <form className="form-floating w-25">
+                        <input type="text" className="form-control" placeholder={'Libellé'} value={libelle} onChange={(event) => { setLibelle(event.target.value) }} disabled={isDetails}></input>
+                        <label>Libellé</label>
+                    </form>
+                    <div className="form-floating w-25 input-group anim">
+                        <div className="form-floating">
+                            <input id="floatingPrixAchat" type="number" className="form-control" placeholder={'Prix catalogue'} value={prixAchat} onChange={(event) => { setPrixAchat(event.target.value) }} disabled={disablePrixAchat}></input>
+                            <label>Prix catalogue</label>
+                        </div>
+                        <span className="input-group-text" id="basic-addon1">€</span>
+                    </div>
+                    <form className="form-floating w-25">
+                        <input type="text" className="form-control" placeholder={'Unité'} value={unite} onChange={(event) => { setUnite(event.target.value) }} disabled={isDetails}></input>
+                        <label>Unité</label>
+                    </form>
                 </div>
             </div>
             <div className="d-flex flex-wrap bg-body-secondary list carte" style={{ width: "85%", height: '5%' }}>
-                <div className="mx-3 d-flex align-items-center justify-content-between w-100">
-                    <select class="form-select w-25" id='selectType' value={type} disabled={isDetails} onChange={() => {
-                        setType(document.getElementById('selectType').value)
-                        if (document.getElementById('selectType').value == "Type") {
-                            setDisablePrixAchat(true); setDisablePrixVente(true); setDisableGamme(true); setDisableCompo(true)
-                        }
-                        if (document.getElementById('selectType').value == 1) {
-                            setDisablePrixAchat(true); setDisablePrixVente(false); setDisableGamme(false); setDisableCompo(false)
-                        }
-                        if (document.getElementById('selectType').value == 2) {
-                            setDisablePrixAchat(true); setDisablePrixVente(true); setDisableGamme(false); setDisableCompo(false)
-                        }
-                        if (document.getElementById('selectType').value == 3) {
-                            setDisablePrixAchat(true); setDisablePrixVente(true); setDisableGamme(true); setDisableCompo(true)
-                        }
-                        if (document.getElementById('selectType').value == 4) {
-                            setDisablePrixAchat(false); setDisablePrixVente(true); setDisableGamme(true); setDisableCompo(true)
-                        }
-                    }}>
-                        <option selected>Type</option>
+                <div className="mx-3 d-flex align-items-center justify-content-between w-100 form-floating">
+                    <select className="form-select w-25" id='selectType' value={type} disabled={isDetails} onChange={(event) => { setType(event.target.value); typeListe() }}>
+                        <option disabled value="0">Type</option>
                         <option value="1">Livrable</option>
                         <option value="2">Intermédiaire</option>
                         <option value="3">Matière Première</option>
                         <option value="4">Achetée</option>
                     </select>
+                    <label>Type</label>
                 </div>
             </div>
         </div>
@@ -426,13 +466,13 @@ function PieceAjout(props) {
                 <div className="d-flex flex-wrap" style={{ width: "85%" }}>
                     <div className="bg-body-secondary d-flex justify-content-between list carte w-25">
                         <div className="d-flex align-items-center justify-content-center w-75">Lier une gamme</div>
-                        <button class="btn w-25" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGamme" aria-expanded="false" aria-controls="collapseExample">
+                        <button className="btn w-25" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGamme" aria-expanded="false" aria-controls="collapseExample">
                             <FontAwesomeIcon icon="fa-solid fa-chevron-down" />
                         </button>
                     </div>
                 </div>
             </div>
-            <div class="collapse" id="collapseGamme">
+            <div className="collapse" id="collapseGamme">
                 <div className="d-flex flex-column align-items-center w-100" style={{ width: "85%" }}>
                     <div className="d-flex flex-wrap bg-body-secondary list carte mb-3" style={{ width: "85%", height: '5%' }}>
                         {provenance !== "details" ? <>
@@ -449,18 +489,18 @@ function PieceAjout(props) {
                                 <div className="d-flex align-items-center justify-content-between" style={{ width: "85%" }}>
                                     {rechercheResultGamme.length > 0 && <div className="input-group w-50 anim border border-2">
                                         {rechercheResultGamme.map((elem, index) => {
-                                            return (<>
-                                                <div onClick={() => { addListeGamme(elem.id, elem.libelle) }} className="d-flex align-items-center my-1 mx-2 rechercheListe w-100">
+                                            return (
+                                                <div key={index} onClick={() => { addListeGamme(elem.id, elem.libelle) }} className="d-flex align-items-center my-1 mx-2 rechercheListe w-100">
                                                     <div className='mx-2'><b>{elem.id}</b> - {elem.libelle}</div>
-                                                </div></>)
+                                                </div>)
                                         })}
                                     </div>}
                                 </div>
                             </div></> : ""}
                         <div className="d-flex flex-column align-items-center w-100">
                             {rechercheResultGamme2.map((elem, index) => {
-                                return (<>
-                                    <div className="d-flex align-items-center bg-body-primary list carte my-1 justify-content-between" style={{ width: "85%" }}>
+                                return (
+                                    <div key={index} className="d-flex align-items-center bg-body-primary list carte my-1 justify-content-between" style={{ width: "85%" }}>
                                         <div className="mx-3 d-flex align-items-center w-75">
                                             <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>{elem.id}</b></div>
                                             <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.libelle}</div>
@@ -469,7 +509,7 @@ function PieceAjout(props) {
                                             <button onClick={() => { deleteListGamme(index) }} className="btn border border-2 mx-1 button bg-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
                                                 data-bs-title="Supprimer"><FontAwesomeIcon icon="fa-solid fa-trash" style={{ color: "#ffffff", }} /></button>
                                         </div> : ""}
-                                    </div></>)
+                                    </div>)
                             })}
                         </div>
                     </div>
@@ -480,13 +520,13 @@ function PieceAjout(props) {
                 <div className="d-flex flex-wrap" style={{ width: "85%" }}>
                     <div className="bg-body-secondary d-flex justify-content-between list carte w-25">
                         <div className="d-flex align-items-center justify-content-center w-75">Gérer la composition</div>
-                        <button class="btn w-25" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCompo" aria-expanded="false" aria-controls="collapseExample">
+                        <button className="btn w-25" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCompo" aria-expanded="false" aria-controls="collapseExample">
                             <FontAwesomeIcon icon="fa-solid fa-chevron-down" />
                         </button>
                     </div>
                 </div>
             </div>
-            <div class="collapse" id="collapseCompo">
+            <div className="collapse" id="collapseCompo">
                 <div className="d-flex flex-column align-items-center w-100" style={{ width: "85%" }}>
                     <div className="d-flex flex-wrap bg-body-secondary list carte mb-3" style={{ width: "85%", height: '5%' }}>
                         {provenance !== "details" ? <>
@@ -503,32 +543,32 @@ function PieceAjout(props) {
                                 <div className="d-flex align-items-center justify-content-between" style={{ width: "85%" }}>
                                     {rechercheResultPiece.length > 0 && <div className="input-group w-50 anim border border-2">
                                         {rechercheResultPiece.map((elem, index) => {
-                                            return (<>
-                                                <div onClick={() => { addListePiece(elem.id, elem.libelle) }} className="d-flex align-items-center my-1 mx-2 rechercheListe w-100">
+                                            return (
+                                                <div key={index} onClick={() => { addListePiece(elem.id, elem.libelle, elem.unite) }} className="d-flex align-items-center my-1 mx-2 rechercheListe w-100">
                                                     <div className='mx-2'><b>{elem.id}</b> - {elem.libelle}</div>
-                                                </div></>)
+                                                </div>)
                                         })}
                                     </div>}
                                 </div>
                             </div></> : ""}
                         <div className="d-flex flex-column align-items-center w-100">
                             {rechercheResultPiece2.map((elem, index) => {
-                                return (<>
-                                    <div className="d-flex align-items-center bg-body-primary list carte my-1 justify-content-between" style={{ width: "85%" }}>
+                                return (
+                                    <div key={index} className="d-flex align-items-center bg-body-primary list carte my-1 justify-content-between" style={{ width: "85%" }}>
                                         <div className="mx-3 d-flex align-items-center w-75">
                                             <div className="mx-3 border-end border-2 px-3 listId text-truncate" id={`id` + elem.id}>{elem.id}</div>
                                             <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate" id={`libelle` + elem.id}>{elem.libelle}</div>
-                                            <form class="mx-3 border-end border-2 listLibelle text-truncate form-floating">
-                                                <input type="text" className="form-control w-100" id={`quantite` + elem.id} placeholder={'Quantité'} value={elem.quantite} onChange={(event) => elem.quantite = event.target.value} disabled={isDetails}></input>
+                                            <form className="mx-3 border-end border-2 listLibelle text-truncate form-floating">
+                                                <input type="number" className="form-control w-100" id={`quantite` + elem.id} placeholder={'Quantité'} value={elem.quantite} onChange={(event) => { changeQte(event, index) }} disabled={isDetails}></input>
                                                 <label for={`quantite` + elem.id}>Quantité</label>
                                             </form>
-                                            <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>{elem.unite}</b></div>
+                                            <div className="mx-3 border-end border-2 px-3 listId text-truncate" id={`unite` + elem.id}><b>{elem.unite}</b></div>
                                         </div>
                                         {provenance !== "details" ? <div className="mx-3 w-25 d-flex justify-content-end">
                                             <button onClick={() => { deleteListPiece(index, id, elem.id) }} className="btn border border-2 mx-1 button bg-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
                                                 data-bs-title="Supprimer"><FontAwesomeIcon icon="fa-solid fa-trash" style={{ color: "#ffffff", }} /></button>
                                         </div> : ""}
-                                    </div></>)
+                                    </div>)
                             })}
                         </div>
                     </div>
