@@ -23,6 +23,12 @@ function Liste(props) {
         if (props.prov === "realisation") {
             return window.location.href = `/realisationsCRUD?id=${id}`;
         }
+        if (props.prov === "client") {
+            return window.location.href = `/clientsfournisseursCRUD?id_client=${id}`;
+        }
+        if (props.prov === "fournisseur") {
+            return window.location.href = `/clientsfournisseursCRUD?id_fournisseur=${id}`;
+        }
     }
 
     function headChangeProv() {
@@ -58,10 +64,17 @@ function Liste(props) {
                 <div className="mx-3 border-end border-2 px-3 listUnite text-truncate"><b>Date</b></div>
             </>
         }
+        if (props.prov === "client" || props.prov === "fournisseur") {
+            return <>
+                <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>ID</b></div>
+                <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate"><b>Raison Sociale</b></div>
+                <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate"><b>Adresse</b></div>
+            </>
+        }
     }
 
     function gereBouton(elem){
-        if (props.prov !== "realisation" && props.prov !== "gamme" && props.droit !== "Atelier") {
+        if (props.prov !== "realisation" && props.prov !== "gamme" && props.droit !== "Atelier" ) {
             return (
                 <>
                     <button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "details") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Détails"><FontAwesomeIcon icon="fa-solid fa-magnifying-glass" style={{ color: "#ffffff", }} /></button>
@@ -133,6 +146,14 @@ function Liste(props) {
                                             <div className="mx-3 border-end border-2 px-3 listUnite text-truncate">{elem.poste_lib}</div>
                                             <div className="mx-3 border-end border-2 px-3 listUnite text-truncate">{elem.machine_lib}</div>
                                             <div className="mx-3 border-end border-2 px-3 listUnite text-truncate">{new Date(elem.date).toLocaleDateString()}</div>
+                                        </>
+                                    }
+                                    {
+                                        (props.prov === "client" || props.prov === "fournisseur") &&
+                                        <>
+                                            <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>{elem.id}</b></div>
+                                            <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.raison_sociale}</div>
+                                            <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.adresse}</div>
                                         </>
                                     }
                                 </div>

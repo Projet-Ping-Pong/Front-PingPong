@@ -32,6 +32,7 @@ function Accueil(props) {
       <div className="text-body d-flex justify-content-evenly align-items-center anim w-100" style={{ width: "100vw" }}>
         {props.service === "Atelier" && <h1>Bienvenue {localStorage.getItem("Nom_uti")}, sur l’espace Atelier</h1>}
         {props.service === "Commerce" && <h1>Bienvenue {localStorage.getItem("Nom_uti")}, sur l’espace Commerce</h1>}
+        {props.service === "Admin" && <h1>Bienvenue {localStorage.getItem("Nom_uti")}, sur l’espace Admin</h1>}
       </div>
     </div>
     </>
