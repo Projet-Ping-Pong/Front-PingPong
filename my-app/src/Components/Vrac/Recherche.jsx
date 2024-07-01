@@ -20,6 +20,9 @@ function Recherche(props) {
     if(props.prov==="gamme"){
       window.location.href = '/gammesCRUD'
     }
+    if(props.prov==="devis"){
+      window.location.href = '/devisCRUD'
+    }
     sessionStorage.setItem("Provenance", "add")
     if(props.prov==="client" || props.prov==="fournisseur"){
       window.location.href = '/clientsfournisseursCRUD'

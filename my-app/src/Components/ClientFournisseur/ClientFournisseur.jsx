@@ -18,6 +18,8 @@ function ClientFournisseur(props) {
     const [raisonSociale, setRaisonSociale] = useState("")
     const [adresse, setAdresse] = useState("")
 
+    const [isDetails, setIsDetails] = useState(false)
+
 
     useEffect(() => {
         props.verifyDroit("Commerce")
@@ -97,6 +99,9 @@ function ClientFournisseur(props) {
                         console.log(error);
                     });
             }
+        }
+        if (provenance === "details") {
+            setIsDetails(true)
         }
        
     },[])
@@ -245,7 +250,7 @@ function ClientFournisseur(props) {
                     <label>Choix</label>
                 </form>
                 <form className="mx-3 d-flex align-items-center justify-content-between form-floating" style={{ width: "70%" }}>
-                    <input type="text" className="form-control w-100" id="floatingInputLibelle" placeholder={'Raison Sociale'} value={raisonSociale} onChange={(event) => {setRaisonSociale(event.target.value)}}></input>
+                    <input type="text" className="form-control w-100" id="floatingInputLibelle" placeholder={'Raison Sociale'} value={raisonSociale} onChange={(event) => {setRaisonSociale(event.target.value)}} disabled={isDetails}></input>
                     <label for="floatingInputLibelle">Raison Sociale</label>
                 </form>
             </div>
@@ -253,7 +258,7 @@ function ClientFournisseur(props) {
         <div className="d-flex flex-column align-items-center w-100" style={{ width: "85%", paddingTop: "50px" }}>
             <div className="d-flex flex-wrap bg-body-secondary list carte" style={{ width: "85%", height: '5%' }}>
                 <form className="mx-3 d-flex align-items-center justify-content-between w-100 form-floating">
-                    <textarea type="textarea" rows="5" id="floatingInputDescription" className="form-control w-100" placeholder={'Adresse'} value={adresse} onChange={(event) => {setAdresse(event.target.value)}}></textarea>
+                    <textarea type="textarea" rows="5" id="floatingInputDescription" className="form-control w-100" placeholder={'Adresse'} value={adresse} onChange={(event) => {setAdresse(event.target.value)}} disabled={isDetails}></textarea>
                     <label for="floatingInputDescription">Adresse</label>
                 </form>
             </div>

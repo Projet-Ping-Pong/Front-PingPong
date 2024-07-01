@@ -21,6 +21,8 @@ import RealisationListe from './Realisation/RealisationListe';
 import Realisation from './Realisation/Realisation';
 import ClientFournisseurList from './ClientFournisseur/ClientFournisseurList';
 import ClientFournisseur from './ClientFournisseur/ClientFournisseur';
+import DevisList from './Devis/DevisList';
+import Devis from './Devis/Devis';
 
 function App() {
 
@@ -110,6 +112,8 @@ function App() {
               <Route path="/realisationsCRUD"         element={<Realisation               uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
               <Route path="/clientsfournisseurs"      element={<ClientFournisseurList     uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
               <Route path="/clientsfournisseursCRUD"  element={<ClientFournisseur         uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+              <Route path="/devis"                    element={<DevisList                 uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+              <Route path="/devisCRUD"                element={<Devis                     uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
             </Routes>
           </BrowserRouter>
           <Footer />

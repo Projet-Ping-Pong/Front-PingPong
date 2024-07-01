@@ -193,7 +193,7 @@ function ClientFournisseurList(props) {
                         setStatutToast('error')
                         new Toast(document.querySelector('.toast')).show()
                     } else {
-                        setRechercheResultClient(data)
+                        setRechercheResultFournisseur(data)
                     }
     
                 })
@@ -203,7 +203,7 @@ function ClientFournisseurList(props) {
                     new Toast(document.querySelector('.toast')).show()
                 });
         }else{
-            getAllClient()
+            getAllFournisseur()
         }
     }
 

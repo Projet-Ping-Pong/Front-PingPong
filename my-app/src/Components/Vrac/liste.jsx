@@ -29,6 +29,9 @@ function Liste(props) {
         if (props.prov === "fournisseur") {
             return window.location.href = `/clientsfournisseursCRUD?id_fournisseur=${id}`;
         }
+        if (props.prov === "devis") {
+            return window.location.href = `/devisCRUD?id=${id}`;
+        }
     }
 
     function headChangeProv() {
@@ -71,10 +74,27 @@ function Liste(props) {
                 <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate"><b>Adresse</b></div>
             </>
         }
+        if (props.prov === "devis") {
+            return <>
+                <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>ID</b></div>
+                <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate"><b>Libellé</b></div>
+                <div className="mx-3 border-end border-2 px-3 listQte text-truncate"><b>Délai</b></div>
+                <div className="mx-3 border-end border-2 px-3 listQte text-truncate"><b>Date</b></div>
+                <div className="mx-3 border-end border-2 px-3 listQte text-truncate"><b>Client</b></div>
+            </>
+        }
     }
 
-    function gereBouton(elem){
-        if (props.prov !== "realisation" && props.prov !== "gamme" && props.droit !== "Atelier" ) {
+    function gereBouton(elem) {
+        if (props.prov === "devis") {
+            return (
+                <>
+                    <button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "details") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Détails"><FontAwesomeIcon icon="fa-solid fa-magnifying-glass" style={{ color: "#ffffff", }} /></button>
+                    <button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "update") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Modifier"><FontAwesomeIcon icon="fa-solid fa-pen-to-square" style={{ color: "#ffffff", }} /></button>
+                </>
+            )
+        }
+        if (props.prov !== "realisation" && props.prov !== "gamme" && props.droit !== "Atelier") {
             return (
                 <>
                     <button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "details") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Détails"><FontAwesomeIcon icon="fa-solid fa-magnifying-glass" style={{ color: "#ffffff", }} /></button>
@@ -82,7 +102,7 @@ function Liste(props) {
                     <button onClick={() => { props.deleteElem(elem.id) }} className="btn border border-2 mx-1 button bg-danger" type="button"><FontAwesomeIcon icon="fa-solid fa-trash" style={{ color: "#ffffff", }} /></button>
                 </>
             )
-        } else if(props.prov === "gamme" && props.uti_id.id_uti == elem.responsable){
+        } else if (props.prov === "gamme" && props.uti_id.id_uti == elem.responsable) {
             return (
                 <>
                     <button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "details") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Détails"><FontAwesomeIcon icon="fa-solid fa-magnifying-glass" style={{ color: "#ffffff", }} /></button>
@@ -154,6 +174,16 @@ function Liste(props) {
                                             <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>{elem.id}</b></div>
                                             <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.raison_sociale}</div>
                                             <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.adresse}</div>
+                                        </>
+                                    }
+                                    {
+                                        (props.prov === "devis") &&
+                                        <>
+                                            <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>{elem.id}</b></div>
+                                            <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.libelle}</div>
+                                            <div className="mx-3 border-end border-2 px-3 listQte text-truncate">{elem.delai}</div>
+                                            <div className="mx-3 border-end border-2 px-3 listQte text-truncate">{elem.date}</div>
+                                            <div className="mx-3 border-end border-2 px-3 listQte text-truncate">{elem.client}</div>
                                         </>
                                     }
                                 </div>
