@@ -23,6 +23,10 @@ import ClientFournisseurList from './ClientFournisseur/ClientFournisseurList';
 import ClientFournisseur from './ClientFournisseur/ClientFournisseur';
 import DevisList from './Devis/DevisList';
 import Devis from './Devis/Devis';
+import DroitList from './Droit/DroitList';
+import Droit from './Droit/Droit';
+import UtilisateurList from './Utilisateur/UtilisateurList';
+import Utilisateur from './Utilisateur/Utilisateur';
 
 function App() {
 
@@ -73,6 +77,9 @@ function App() {
       if(!service === "Commerce" && utiDroit !== "Commerce"){
         window.location.href = '/accueil';
       }
+      if(!service === "Admin" && utiDroit !== "Admin"){
+        window.location.href = '/accueil';
+      }
     }
   }
 
@@ -114,6 +121,11 @@ function App() {
               <Route path="/clientsfournisseursCRUD"  element={<ClientFournisseur         uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
               <Route path="/devis"                    element={<DevisList                 uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
               <Route path="/devisCRUD"                element={<Devis                     uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+
+              <Route path="/droits"                   element={<DroitList                 uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+              <Route path="/droitsCRUD"               element={<Droit                     uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+              <Route path="/utilisateurs"             element={<UtilisateurList           uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+              <Route path="/utilisateursCRUD"         element={<Utilisateur               uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
             </Routes>
           </BrowserRouter>
           <Footer />

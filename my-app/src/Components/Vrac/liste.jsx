@@ -32,6 +32,12 @@ function Liste(props) {
         if (props.prov === "devis") {
             return window.location.href = `/devisCRUD?id=${id}`;
         }
+        if (props.prov === "droit") {
+            return window.location.href = `/droitsCRUD?id=${id}`;
+        }
+        if (props.prov === "utilisateur") {
+            return window.location.href = `/utilisateursCRUD?id=${id}`;
+        }
     }
 
     function headChangeProv() {
@@ -81,6 +87,21 @@ function Liste(props) {
                 <div className="mx-3 border-end border-2 px-3 listQte text-truncate"><b>Délai</b></div>
                 <div className="mx-3 border-end border-2 px-3 listQte text-truncate"><b>Date</b></div>
                 <div className="mx-3 border-end border-2 px-3 listQte text-truncate"><b>Client</b></div>
+            </>
+        }
+        if (props.prov === "droit") {
+            return <>
+                <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>ID</b></div>
+                <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate"><b>Libellé</b></div>
+                <div className="mx-3 border-end border-2 px-3 listQte text-truncate"><b>Niveau</b></div>
+            </>
+        }
+        if (props.prov === "utilisateur") {
+            return <>
+                <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>ID</b></div>
+                <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate"><b>Nom</b></div>
+                <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate"><b>Prénom</b></div>
+                <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate"><b>Identifiant</b></div>
             </>
         }
     }
@@ -184,6 +205,23 @@ function Liste(props) {
                                             <div className="mx-3 border-end border-2 px-3 listQte text-truncate">{elem.delai}</div>
                                             <div className="mx-3 border-end border-2 px-3 listQte text-truncate">{elem.date}</div>
                                             <div className="mx-3 border-end border-2 px-3 listQte text-truncate">{elem.client}</div>
+                                        </>
+                                    }
+                                    {
+                                        (props.prov === "droit") &&
+                                        <>
+                                            <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>{elem.id}</b></div>
+                                            <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.libelle}</div>
+                                            <div className="mx-3 border-end border-2 px-3 listQte text-truncate">{elem.niveau}</div>
+                                        </>
+                                    }
+                                    {
+                                        (props.prov === "utilisateur") &&
+                                        <>
+                                            <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>{elem.id}</b></div>
+                                            <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.nom}</div>
+                                            <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.prenom}</div>
+                                            <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.nom_uti}</div>
                                         </>
                                     }
                                 </div>

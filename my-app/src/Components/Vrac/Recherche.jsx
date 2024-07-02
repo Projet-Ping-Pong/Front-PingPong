@@ -23,6 +23,12 @@ function Recherche(props) {
     if(props.prov==="devis"){
       window.location.href = '/devisCRUD'
     }
+    if(props.prov==="droit"){
+      window.location.href = '/droitsCRUD'
+    }
+    if(props.prov==="utilisateur"){
+      window.location.href = '/utilisateursCRUD'
+    }
     sessionStorage.setItem("Provenance", "add")
     if(props.prov==="client" || props.prov==="fournisseur"){
       window.location.href = '/clientsfournisseursCRUD'

@@ -70,6 +70,62 @@ function NavBar(props) {
                                     <li className="nav-item">
                                         <a href='/accueil' className='nav-link'><button className="nav-link active border-start px-4 border-2 buttonnav" aria-current="page"><FontAwesomeIcon icon="fa-solid fa-house" className='me-3' />Accueil</button></a>
                                     </li>
+                                    <li className="nav-item">
+                                        <div class="dropdown nav-link">
+                                            <a class="dropdown-toggle nav-link active border-start px-4 border-2 buttonnav" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <FontAwesomeIcon icon="fa-solid fa-screwdriver-wrench" className='me-3' />Atelier
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li className="dropdown-item">
+                                                    <a href='/pieces' className='nav-link'><button className="nav-link active border-start px-4 border-2 buttonnav" aria-current="page"><FontAwesomeIcon icon="fa-solid fa-table-tennis-paddle-ball" className='me-3' />Pièces</button></a>
+                                                </li>
+                                                <li className="dropdown-item">
+                                                    <a href='/gammes' className='nav-link'><button className="nav-link active border-start px-4 border-2 buttonnav" aria-current="page"><FontAwesomeIcon icon="fa-solid fa-list-check" className='me-3' />Gammes</button></a>
+                                                </li>
+                                                <li className="dropdown-item">
+                                                    <a href='/operations' className='nav-link'><button className="nav-link active border-start px-4 border-2 buttonnav" aria-current="page"><FontAwesomeIcon icon="fa-solid fa-gear" className='me-3' />Opérations</button></a>
+                                                </li>
+                                                <li className="dropdown-item">
+                                                    <a href='/postes' className='nav-link'><button className="nav-link active border-start px-4 border-2 buttonnav" aria-current="page"><FontAwesomeIcon icon="fa-solid fa-computer" className='me-3' />Postes</button></a>
+                                                </li>
+                                                <li className="dropdown-item">
+                                                    <a href='/machines' className='nav-link'><button className="nav-link active border-start px-4 border-2 buttonnav" aria-current="page"><FontAwesomeIcon icon="fa-solid fa-desktop" className='me-3' />Machines</button></a>
+                                                </li>
+                                                <li className="dropdown-item">
+                                                    <a href='/realisations' className='nav-link'><button className="nav-link active border-start px-4 border-2 buttonnav" aria-current="page"><FontAwesomeIcon icon="fa-solid fa-screwdriver-wrench" className='me-3' />Réalisations</button></a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li className="nav-item">
+                                        <div class="dropdown nav-link">
+                                            <a class="dropdown-toggle nav-link active border-start px-4 border-2 buttonnav" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <FontAwesomeIcon icon="fa-solid fa-screwdriver-wrench" className='me-3' />Commerce
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li className="dropdown-item">
+                                                    <a href='/devis' className='nav-link'><button className="nav-link active border-start px-4 border-2 buttonnav" aria-current="page"><FontAwesomeIcon icon="fa-solid fa-file" className='me-3' />Devis</button></a>
+                                                </li>
+                                                <li className="dropdown-item">
+                                                    <a href='/commandesventes' className='nav-link'><button className="nav-link active border-start px-4 border-2 buttonnav" aria-current="page"><FontAwesomeIcon icon="fa-solid fa-cart-flatbed" className='me-3' />Commande de vente</button></a>
+                                                </li>
+                                                <li className="dropdown-item">
+                                                    <a href='/commandesachats' className='nav-link'><button className="nav-link active border-start px-4 border-2 buttonnav" aria-current="page"><FontAwesomeIcon icon="fa-solid fa-cart-plus" className='me-3' />Commande d'achat</button></a>
+                                                </li>
+                                                <li className="dropdown-item">
+                                                    <a href='/clientsfournisseurs' className='nav-link'><button className="nav-link active border-start px-4 border-2 buttonnav" aria-current="page"><FontAwesomeIcon icon="fa-solid fa-users" className='me-3' />Clients / Fournisseurs</button></a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li className="nav-item">
+                                        <a href='/utilisateurs' className='nav-link'><button className="nav-link active border-start px-4 border-2 buttonnav" aria-current="page"><FontAwesomeIcon icon="fa-solid fa-house" className='me-3' />Utilisateurs</button></a>
+                                    </li>
+                                    <li className="nav-item">
+                                        <a href='/droits' className='nav-link'><button className="nav-link active border-start px-4 border-2 buttonnav" aria-current="page"><FontAwesomeIcon icon="fa-solid fa-house" className='me-3' />Droits</button></a>
+                                    </li>
+
+
                                 </>
                             }
                         </ul>
