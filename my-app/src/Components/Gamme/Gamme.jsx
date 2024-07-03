@@ -57,86 +57,19 @@ function Gamme(props) {
                         setStatutToast('error')
                         new Toast(document.querySelector('.toast')).show()
                     } else {
-                        setLibelle(data.libelle)
-                        setDescription(data.description)
-                        setResp(data.responsable)
-                        fetch(`${process.env.REACT_APP_URL}/gammeoperation/getOpByIdGamme`,
-                            {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
-                                body: JSON.stringify({
-                                    id_gamme: IdFromURL,
-                                })
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.erreur != null) {
-                                    // Erreur, phrase définie dans le back
-                                    setInfoToast(data.erreur)
-                                    setStatutToast('error')
-                                    new Toast(document.querySelector('.toast')).show()
-                                } else {
-                                    setRechercheResultOperationAff(data)
-                                }
-                            })
-                            .catch(error => {
-                                console.log(error)
-                            });
-
-                        if(data.id_piece != undefined && data.id_piece != null){
-                            fetch(`${process.env.REACT_APP_URL}/piece/getId`,
-                                {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
-                                    body: JSON.stringify({
-                                        id: data.id_piece,
-                                    })
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.erreur != null) {
-                                        // Erreur, phrase définie dans le back
-                                        setInfoToast(data.erreur)
-                                        setStatutToast('error')
-                                        new Toast(document.querySelector('.toast')).show()
-                                    } else {
-                                        setRef(data.libelle)
-                                        addListePiece(data.id, data.libelle)
-                                    }
-                                })
-                                .catch(error => {
-                                    console.log(error)
-                                });
+                        console.log(data);
+                        setLibelle(data.gamme.libelle)
+                        setDescription(data.gamme.description)
+                        setResp(data.gamme.responsable)
+                        setRechercheResultOperationAff(data.operations)
+                        if(data.piece){
+                            setRef(data.piece.libelle)
+                            addListePiece(data.piece.id, data.piece.libelle)
                         }
-
-                        if(data.responsable != undefined && data.responsable != null){
-                            console.log(data.responsable);
-                            fetch(`${process.env.REACT_APP_URL}/utilisateur/getId`,
-                                {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
-                                    body: JSON.stringify({
-                                        id: data.responsable,
-                                    })
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.erreur != null) {
-                                        // Erreur, phrase définie dans le back
-                                        setInfoToast(data.erreur)
-                                        setStatutToast('error')
-                                        new Toast(document.querySelector('.toast')).show()
-                                    } else {
-                                        console.log(data);
-                                        setResp(data.nom_uti)
-                                        addListeResponsable(data.id, data.nom_uti)
-                                    }
-                                })
-                                .catch(error => {
-                                    console.log(error)
-                                });
+                        if(data.utilisateur){
+                            setResp(data.utilisateur.nom_uti)
+                            addListeResponsable(data.utilisateur.id, data.utilisateur.nom_uti)
                         }
-                        
                     }
                 })
                 .catch(error => {

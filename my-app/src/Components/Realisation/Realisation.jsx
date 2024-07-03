@@ -23,9 +23,6 @@ function Realisation(props) {
     const [infoToast, setInfoToast] = useState("")
     const [statutToast, setStatutToast] = useState("")
 
-    const [rechercheResult, setRechercheResult] = useState()
-
-
     useEffect(() => {
         props.verifyDroit("Atelier")
     })

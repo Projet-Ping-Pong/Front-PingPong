@@ -23,6 +23,12 @@ function Recherche(props) {
     if(props.prov==="devis"){
       window.location.href = '/devisCRUD'
     }
+    if(props.prov==="commandevente"){
+      window.location.href = '/commandesventesCRUD'
+    }
+    if(props.prov==="commandeachat"){
+      window.location.href = '/commandesachatsCRUD'
+    }
     if(props.prov==="droit"){
       window.location.href = '/droitsCRUD'
     }

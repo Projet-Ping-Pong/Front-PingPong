@@ -25,9 +25,7 @@ function PieceAjout(props) {
     const [prixAchat, setPrixAchat] = useState()
     const [quantite, setQuantite] = useState()
     const [unite, setUnite] = useState("")
-    const [type, setType] = useState("0")
-
-    const [qteCompo, setQteCompo] = useState()
+    const [type, setType] = useState(0)
 
     const [rechercheResultGamme, setRechercheResultGamme] = useState([])
     const [rechercheResultGamme2, setRechercheResultGamme2] = useState([])
@@ -67,61 +65,21 @@ function PieceAjout(props) {
                         setStatutToast('error')
                         new Toast(document.querySelector('.toast')).show()
                     } else {
-                        setRechercheResultPiece(data)
-                        setLibelle(data.libelle)
-                        setPrixAchat(data.prix_catalogue)
-                        setPrixVente(data.prix_vente)
-                        setQuantite(data.stock)
-                        setUnite(data.unite)
-                        setType(data.type)
+                        console.log(data);
+                        setRechercheResultPiece(data.piece)
+                        setLibelle(data.piece.libelle)
+                        setPrixAchat(data.piece.prix_catalogue)
+                        setPrixVente(data.piece.prix_vente)
+                        setQuantite(data.piece.stock)
+                        setUnite(data.piece.unite)
+                        setType(data.piece.type)
                         typeListe()
-
-                        if (data.id_gamme != null) {
-                            fetch(`${process.env.REACT_APP_URL}/gamme/getId`,
-                                {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
-                                    body: JSON.stringify({
-                                        id: data.id_gamme,
-                                    })
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.erreur != null) {
-                                        // Erreur, phrase définie dans le back
-                                        setInfoToast(data.erreur)
-                                        setStatutToast('error')
-                                        new Toast(document.querySelector('.toast')).show()
-                                    } else {
-                                        setRechercheResultGamme2([data])
-                                    }
-                                })
-                                .catch(error => {
-                                    console.log(error)
-                                });
+                        if(data.gamme){
+                            setRechercheResultGamme2([data.gamme])
                         }
-                        fetch(`${process.env.REACT_APP_URL}/piececompo/getCompoByIdPiece`,
-                            {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
-                                body: JSON.stringify({
-                                    id_piece_composant: IdFromURL,
-                                })
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.erreur != null) {
-                                    // Erreur, phrase définie dans le back
-                                    setInfoToast(data.erreur)
-                                    setStatutToast('error')
-                                    new Toast(document.querySelector('.toast')).show()
-                                } else {
-                                    setRechercheResultPiece2(data)
-                                }
-                            })
-                            .catch(error => {
-                                console.log(error)
-                            });
+                        if(data.piececompo){
+                            setRechercheResultPiece2(data.piececompo)
+                        }
                     }
                 })
                 .catch(error => {
@@ -379,22 +337,22 @@ function PieceAjout(props) {
     }
 
     function typeListe() {
-        if (document.getElementById('selectType').value === "0") {
+        if (document.getElementById('selectType').value == 0) {
             setDisablePrixAchat(true); setDisablePrixVente(true); setDisableGamme(true); setDisableCompo(true)
         }
-        if (document.getElementById('selectType').value === "1") {
+        if (document.getElementById('selectType').value == 1) {
             setDisablePrixAchat(true); setDisablePrixVente(false); setDisableGamme(false); setDisableCompo(false)
             setPrixAchat("")
         }
-        if (document.getElementById('selectType').value === "2") {
+        if (document.getElementById('selectType').value == 2) {
             setDisablePrixAchat(true); setDisablePrixVente(true); setDisableGamme(false); setDisableCompo(false)
             setPrixAchat(""); setPrixVente("")
         }
-        if (document.getElementById('selectType').value === "3") {
+        if (document.getElementById('selectType').value == 3) {
             setDisablePrixAchat(true); setDisablePrixVente(true); setDisableGamme(true); setDisableCompo(true)
             setPrixAchat(""); setPrixVente("")
         }
-        if (document.getElementById('selectType').value === "4") {
+        if (document.getElementById('selectType').value == 4) {
             setDisablePrixAchat(false); setDisablePrixVente(true); setDisableGamme(true); setDisableCompo(true)
             setPrixVente("")
         }
@@ -452,11 +410,11 @@ function PieceAjout(props) {
             <div className="d-flex flex-wrap bg-body-secondary list carte" style={{ width: "85%", height: '5%' }}>
                 <div className="mx-3 d-flex align-items-center justify-content-between w-100 form-floating">
                     <select className="form-select w-25" id='selectType' value={type} disabled={isDetails} onChange={(event) => { setType(event.target.value); typeListe() }}>
-                        <option disabled value="0">Type</option>
-                        <option value="1">Livrable</option>
-                        <option value="2">Intermédiaire</option>
-                        <option value="3">Matière Première</option>
-                        <option value="4">Achetée</option>
+                        <option disabled value={0}>Type</option>
+                        <option value={1}>Livrable</option>
+                        <option value={2}>Intermédiaire</option>
+                        <option value={3}>Matière Première</option>
+                        <option value={4}>Achetée</option>
                     </select>
                     <label>Type</label>
                 </div>

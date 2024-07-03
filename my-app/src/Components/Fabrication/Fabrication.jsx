@@ -59,57 +59,12 @@ function Fabrication(props) {
                     setStatutToast('error')
                     new Toast(document.querySelector('.toast')).show()
                 } else {
-                    setLibGamme(data.libelle)
-                    setIdPiece(data.id_piece)
-                    id_piece = data.id_piece
-                    if (id_piece != undefined || id_piece != null || id_piece !== 0) {
-                        fetch(`${process.env.REACT_APP_URL}/piece/getId`,
-                            {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
-                                body: JSON.stringify({
-                                    id: id_piece,
-                                })
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.erreur != null) {
-                                    // Erreur, phrase définie dans le back
-                                    setInfoToast(data.erreur)
-                                    setStatutToast('error')
-                                    new Toast(document.querySelector('.toast')).show()
-                                } else {
-                                    setIdPiece(data.id)
-                                    setLibPiece(data.libelle)
-                                }
-                            })
-                            .catch(error => {
-                                console.log(error)
-                            });
-
-                        fetch(`${process.env.REACT_APP_URL}/gammeoperation/getOpByIdGamme`,
-                            {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
-                                body: JSON.stringify({
-                                    id_gamme: IdFromURL,
-                                })
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.erreur != null) {
-                                    // Erreur, phrase définie dans le back
-                                    setInfoToast(data.erreur)
-                                    setStatutToast('error')
-                                    new Toast(document.querySelector('.toast')).show()
-                                } else {
-                                    setRechercheOpResult(data)
-                                }
-                            })
-                            .catch(error => {
-                                console.log(error)
-                            });
+                    setLibGamme(data.gamme.libelle)
+                    if(data.piece){
+                        setIdPiece(data.piece.id)
+                        setLibPiece(data.piece.libelle)
                     }
+                    setRechercheOpResult(data.operations)
                 }
             })
             .catch(error => {

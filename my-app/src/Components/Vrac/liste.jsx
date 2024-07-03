@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import '../../Style/App.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -31,6 +30,12 @@ function Liste(props) {
         }
         if (props.prov === "devis") {
             return window.location.href = `/devisCRUD?id=${id}`;
+        }
+        if (props.prov === "commandevente") {
+            return window.location.href = `/commandesventesCRUD?id=${id}`;
+        }
+        if (props.prov === "commandeachat") {
+            return window.location.href = `/commandesachatsCRUD?id=${id}`;
         }
         if (props.prov === "droit") {
             return window.location.href = `/droitsCRUD?id=${id}`;
@@ -89,6 +94,22 @@ function Liste(props) {
                 <div className="mx-3 border-end border-2 px-3 listQte text-truncate"><b>Client</b></div>
             </>
         }
+        if (props.prov === "commandevente") {
+            return <>
+                <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>ID</b></div>
+                <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate"><b>Libellé</b></div>
+                <div className="mx-3 border-end border-2 px-3 listQte text-truncate"><b>Date</b></div>
+                <div className="mx-3 border-end border-2 px-3 listQte text-truncate"><b>Client</b></div>
+            </>
+        }
+        if (props.prov === "commandeachat") {
+            return <>
+                <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>ID</b></div>
+                <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate"><b>Libellé</b></div>
+                <div className="mx-3 border-end border-2 px-3 listQte text-truncate"><b>Date</b></div>
+                <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate"><b>Fournisseur</b></div>
+            </>
+        }
         if (props.prov === "droit") {
             return <>
                 <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>ID</b></div>
@@ -108,13 +129,43 @@ function Liste(props) {
 
     function gereBouton(elem) {
         if (props.prov === "devis") {
-            return (
-                <>
-                    <button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "details") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Détails"><FontAwesomeIcon icon="fa-solid fa-magnifying-glass" style={{ color: "#ffffff", }} /></button>
-                    <button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "update") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Modifier"><FontAwesomeIcon icon="fa-solid fa-pen-to-square" style={{ color: "#ffffff", }} /></button>
-                </>
-            )
+            if(elem.date){
+                return (<button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "details") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Détails"><FontAwesomeIcon icon="fa-solid fa-magnifying-glass" style={{ color: "#ffffff", }} /></button>)
+            }else{
+                return (
+                    <>
+                        <button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "details") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Détails"><FontAwesomeIcon icon="fa-solid fa-magnifying-glass" style={{ color: "#ffffff", }} /></button>
+                        <button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "update") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Modifier"><FontAwesomeIcon icon="fa-solid fa-pen-to-square" style={{ color: "#ffffff", }} /></button>
+                    </>
+                )
+            }
+            
         }
+        if (props.prov === "commandevente") {
+                return (
+                    <>
+                        <button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "details") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Détails"><FontAwesomeIcon icon="fa-solid fa-magnifying-glass" style={{ color: "#ffffff", }} /></button>
+                        <button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "update") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Modifier"><FontAwesomeIcon icon="fa-solid fa-pen-to-square" style={{ color: "#ffffff", }} /></button>
+                    </>
+                )
+        }
+        if (props.prov === "commandeachat") {
+            if(elem.date_liv_reelle <= Date.now()){
+                return (
+                    <>
+                        <button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "details") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Détails"><FontAwesomeIcon icon="fa-solid fa-magnifying-glass" style={{ color: "#ffffff", }} /></button>
+                    </>
+                )
+            }else{
+                return (
+                    <>
+                        <button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "details") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Détails"><FontAwesomeIcon icon="fa-solid fa-magnifying-glass" style={{ color: "#ffffff", }} /></button>
+                        <button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "update") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Modifier"><FontAwesomeIcon icon="fa-solid fa-pen-to-square" style={{ color: "#ffffff", }} /></button>
+                    </>
+                )
+            }
+            
+    }
         if (props.prov !== "realisation" && props.prov !== "gamme" && props.droit !== "Atelier") {
             return (
                 <>
@@ -202,9 +253,27 @@ function Liste(props) {
                                         <>
                                             <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>{elem.id}</b></div>
                                             <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.libelle}</div>
-                                            <div className="mx-3 border-end border-2 px-3 listQte text-truncate">{elem.delai}</div>
-                                            <div className="mx-3 border-end border-2 px-3 listQte text-truncate">{elem.date}</div>
+                                            <div className="mx-3 border-end border-2 px-3 listQte text-truncate">{elem.delai?new Date(elem.delai).toLocaleDateString():""}</div>
+                                            <div className="mx-3 border-end border-2 px-3 listQte text-truncate">{elem.date?new Date(elem.date).toLocaleDateString():""}</div>
                                             <div className="mx-3 border-end border-2 px-3 listQte text-truncate">{elem.client}</div>
+                                        </>
+                                    }
+                                    {
+                                        (props.prov === "commandevente") &&
+                                        <>
+                                            <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>{elem.id}</b></div>
+                                            <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.libelle}</div>
+                                            <div className="mx-3 border-end border-2 px-3 listQte text-truncate">{elem.date?new Date(elem.date).toLocaleDateString():""}</div>
+                                            <div className="mx-3 border-end border-2 px-3 listQte text-truncate">{elem.client}</div>
+                                        </>
+                                    }
+                                    {
+                                        (props.prov === "commandeachat") &&
+                                        <>
+                                            <div className="mx-3 border-end border-2 px-3 listId text-truncate"><b>{elem.id}</b></div>
+                                            <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.libelle}</div>
+                                            <div className="mx-3 border-end border-2 px-3 listQte text-truncate">{elem.date?new Date(elem.date).toLocaleDateString():""}</div>
+                                            <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.fournisseur}</div>
                                         </>
                                     }
                                     {

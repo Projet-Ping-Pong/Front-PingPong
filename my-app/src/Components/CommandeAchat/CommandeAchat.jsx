@@ -5,7 +5,7 @@ import Toast from 'bootstrap/js/dist/toast';
 import ToastAff from '../Toast';
 import { debounce } from 'lodash';
 
-function Devis(props) {
+function CommandeAchat(props) {
 
     const [provenance, setProvenance] = useState(sessionStorage.getItem("Provenance"))
     const [infoToast, setInfoToast] = useState("")
@@ -13,12 +13,13 @@ function Devis(props) {
 
     const [id, setId] = useState()
 
-    const [rechercheResultClient, setRechercheResultClient] = useState([])
-    const [idClient, setIdClient] = useState("")
+    const [rechercheResultFournisseur, setRechercheResultFournisseur] = useState([])
+    const [idFournisseur, setIdFournisseur] = useState("")
 
-    const [libelleDevis, setLibelleDevis] = useState("")
-    const [delaiDevis, setDelaiDevis] = useState("")
-    const [dateDevis, setDateDevis] = useState("")
+    const [libelleAchat, setLibelleAchat] = useState("")
+    const [dateAchat, setDateAchat] = useState("")
+    const [dateprvAchat, setDateprvAchat] = useState("")
+    const [daterlAchat, setDaterlAchat] = useState("")
 
     const [rechercheResultPiece, setRechercheResultPiece] = useState([])
     const [listePiece, setListePiece] = useState([])
@@ -41,7 +42,7 @@ function Devis(props) {
             setId(IdFromURL)
 
             if (IdFromURL) {
-                fetch(`${process.env.REACT_APP_URL}/devis/getId`,
+                fetch(`${process.env.REACT_APP_URL}/commandeachat/getId`,
                     {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
@@ -57,10 +58,11 @@ function Devis(props) {
                             setStatutToast('error')
                             new Toast(document.querySelector('.toast')).show()
                         } else {
-                            addClient(data.devis.id_client, data.devis.client)
-                            setLibelleDevis(data.devis.libelle)
-                            setDelaiDevis(data.devis.delai)
-                            setDateDevis(data.devis.date)
+                            addFournisseur(data.commande.id_fournisseur, data.commande.fournisseur)
+                            setLibelleAchat(data.commande.libelle)
+                            setDateAchat(data.commande.date)
+                            setDateprvAchat(data.commande.date_liv_prevue)
+                            setDaterlAchat(data.commande.date_liv_reelle)
                             setListePiece(data.listePiece)
                         }
                     })
@@ -76,16 +78,17 @@ function Devis(props) {
     }, [])
 
     function add() {
-        fetch(`${process.env.REACT_APP_URL}/devis/add`,
+        fetch(`${process.env.REACT_APP_URL}/commandeachat/add`,
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
                 body: JSON.stringify({
-                    devis: {
-                        libelle: libelleDevis,
-                        delai: delaiDevis,
-                        date: dateDevis,
-                        id_client: idClient
+                    commandeAchat: {
+                        libelle: libelleAchat,
+                        date_liv_prevue: dateprvAchat,
+                        date_liv_reelle: daterlAchat,
+                        date: dateAchat,
+                        id_fournisseur: idFournisseur
                     },
                     listePiece: listePiece
                 })
@@ -99,7 +102,7 @@ function Devis(props) {
                     new Toast(document.querySelector('.toast')).show()
                 } else {
                     localStorage.setItem("Toast", "success")
-                    window.location.href = '/devis'
+                    window.location.href = '/commandesachats'
                 }
             })
             .catch(error => {
@@ -110,16 +113,17 @@ function Devis(props) {
     }
 
     function update(id) {
-        fetch(`${process.env.REACT_APP_URL}/devis/update/${id}`,
+        fetch(`${process.env.REACT_APP_URL}/commandeachat/update/${id}`,
             {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
                 body: JSON.stringify({
-                    devis: {
-                        libelle: libelleDevis,
-                        delai: delaiDevis,
-                        date: dateDevis,
-                        id_client: idClient
+                    commandeAchat: {
+                        libelle: libelleAchat,
+                        date_liv_prevue: dateprvAchat,
+                        date_liv_reelle: daterlAchat,
+                        date: dateAchat,
+                        id_fournisseur: idFournisseur
                     },
                     listePiece: listePiece
                 })
@@ -133,7 +137,7 @@ function Devis(props) {
                     new Toast(document.querySelector('.toast')).show()
                 } else {
                     localStorage.setItem("Toast", "successUpdate")
-                    window.location.href = '/devis'
+                    window.location.href = '/commandesachats'
                 }
             })
             .catch(error => {
@@ -143,9 +147,9 @@ function Devis(props) {
             });
     }
 
-    function rechercheClient(raison_sociale) {
+    function rechercheFournisseur(raison_sociale) {
         if (raison_sociale) {
-            fetch(`${process.env.REACT_APP_URL}/client/rechRaisonSociale`,
+            fetch(`${process.env.REACT_APP_URL}/fournisseur/rechRaisonSociale`,
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
@@ -161,7 +165,7 @@ function Devis(props) {
                         setStatutToast('error')
                         new Toast(document.querySelector('.toast')).show()
                     } else {
-                        setRechercheResultClient(data)
+                        setRechercheResultFournisseur(data)
                     }
                 })
                 .catch(error => {
@@ -170,19 +174,19 @@ function Devis(props) {
                     new Toast(document.querySelector('.toast')).show()
                 });
         } else {
-            setRechercheResultClient([])
+            setRechercheResultFournisseur([])
         }
     }
 
-    function addClient(id, raison_sociale) {
-        setIdClient(id)
-        document.getElementById("rechercheClient").value = raison_sociale
-        setRechercheResultClient([])
+    function addFournisseur(id, raison_sociale) {
+        setIdFournisseur(id)
+        document.getElementById("rechercheFournisseur").value = raison_sociale
+        setRechercheResultFournisseur([])
     }
 
     const recherchePiece = (libelle) => {
         if (libelle) {
-            fetch(`${process.env.REACT_APP_URL}/piece/rechLivrable`,
+            fetch(`${process.env.REACT_APP_URL}/piece/rechAchFournisseur`,
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
@@ -212,14 +216,14 @@ function Devis(props) {
         }
     }
 
-    function addListePiece(id_piece, libelle, unite, prix_vente) {
+    function addListePiece(id_piece, libelle, unite, prix_achat) {
         if (listePiece.find((listePiece) => listePiece.id_piece === id_piece) === undefined) {
             const tab = [...listePiece, {
                 id_piece: id_piece,
                 libelle: libelle,
                 quantite: 0,
                 unite: unite,
-                prix_vente: prix_vente,
+                prix_achat: prix_achat,
             }]
             setListePiece(tab)
             setRechercheResultPiece([])
@@ -238,7 +242,7 @@ function Devis(props) {
 
     function deleteListPiece(index) {
         if (window.confirm("Voulez-vous supprimer la ligne avec l'id : " + id + " du devis ?\nAttention cette action est irreversible")) {
-            fetch(`${process.env.REACT_APP_URL}/lignedevis/delete/${listePiece[index].id}`,
+            fetch(`${process.env.REACT_APP_URL}/ligneachat/delete/${listePiece[index].id}`,
                 {
                     method: 'DELETE',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
@@ -271,31 +275,31 @@ function Devis(props) {
         setListePiece(tab)
     }
 
-    function changePrixVente(index, prix_vente) {
+    function changePrixAchat(index, prix_achat) {
         let tab = [...listePiece]
-        tab[index].prix_vente = prix_vente
+        tab[index].prix_achat = prix_achat
         setListePiece(tab)
     }
 
     return (<>
         <ToastAff infoToast={infoToast} statutToast={statutToast}></ToastAff>
-        {provenance === "add" ? <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Ajout des Devis</h1></div> : ""}
-        {provenance === "update" ? <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Modification des Devis</h1></div> : ""}
-        {provenance === "details" ? <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Détails des Devis</h1></div> : ""}
+        {provenance === "add" ? <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Ajout des commandes d'achat</h1></div> : ""}
+        {provenance === "update" ? <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Modification des commandes d'achat</h1></div> : ""}
+        {provenance === "details" ? <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Détails des commandes d'achat</h1></div> : ""}
 
         <div className="d-flex flex-column align-items-center w-100" style={{ width: "85%", paddingTop: "50px" }}>
             <div className="d-flex flex-wrap bg-body-secondary justify-content-center list carte" style={{ width: "85%", height: '5%' }}>
                 <form className="mx-3 d-flex flex-wrap align-items-center justify-content-between form-floating" style={{ width: "30%" }}>
-                    <input type="text" className="form-control w-100" placeholder={'Client'} id="rechercheClient" onChange={debounce((event) => { rechercheClient(event.target.value) }, 500)} disabled={isDetails}></input>
-                    <label>Client</label>
+                    <input type="text" className="form-control w-100" placeholder={'Fournisseur'} id="rechercheFournisseur" onChange={debounce((event) => { rechercheFournisseur(event.target.value) }, 500)} disabled={isDetails}></input>
+                    <label>Fournisseur</label>
                     <div className="d-flex flex-column align-items-center w-100">
                         <div className="d-flex align-items-center justify-content-between" style={{ width: "100%" }}>
                             {
-                                rechercheResultClient.length > 0 &&
+                                rechercheResultFournisseur.length > 0 &&
                                 <div className="input-group anim border border-2">
-                                    {rechercheResultClient.map((elem) => {
+                                    {rechercheResultFournisseur.map((elem) => {
                                         return (<>
-                                            <div onClick={() => { addClient(elem.id, elem.raison_sociale) }} className="d-flex align-items-center my-1 mx-2 rechercheListe w-100">
+                                            <div onClick={() => { addFournisseur(elem.id, elem.raison_sociale) }} className="d-flex align-items-center my-1 mx-2 rechercheListe w-100">
                                                 <div className='mx-2'><b>{elem.id}</b> - {elem.raison_sociale}</div>
                                             </div></>)
                                     })}
@@ -309,16 +313,20 @@ function Devis(props) {
         <div className="d-flex flex-column align-items-center w-100" style={{ width: "85%", paddingTop: "50px" }}>
             <div className="d-flex flex-wrap bg-body-secondary justify-content-between list carte" style={{ width: "85%", height: '5%' }}>
                 <form className="mx-3 d-flex align-items-center justify-content-between form-floating" style={{ width: "30%" }}>
-                    <input type="text" className="form-control w-100" id="floatingInputLibelle" placeholder={'Libelle'} value={libelleDevis} onChange={(event) => { setLibelleDevis(event.target.value) }} disabled={isDetails} ></input>
+                    <input type="text" className="form-control w-100" id="floatingInputLibelle" placeholder={'Libelle'} value={libelleAchat} onChange={(event) => { setLibelleAchat(event.target.value) }} disabled={isDetails} ></input>
                     <label for="floatingInputLibelle">Libelle</label>
                 </form>
-                <form className="mx-3 d-flex align-items-center justify-content-between form-floating" style={{ width: "30%" }}>
-                    <input type="date" className="form-control w-100" id="floatingInputLibelle" placeholder={'Date'} value={dateDevis} onChange={(event) => { setDateDevis(event.target.value) }} disabled={isDetails}></input>
+                <form className="mx-3 d-flex align-items-center justify-content-between form-floating" style={{ width: "20%" }}>
+                    <input type="date" className="form-control w-100" id="floatingInputLibelle" placeholder={'Date'} value={dateAchat} onChange={(event) => { setDateAchat(event.target.value) }} disabled={isDetails}></input>
                     <label for="floatingInputLibelle">Date</label>
                 </form>
-                <form className="mx-3 d-flex align-items-center justify-content-between form-floating" style={{ width: "30%" }}>
-                    <input type="date" className="form-control w-100" id="floatingInputLibelle" placeholder={'Délai'} value={delaiDevis} onChange={(event) => { setDelaiDevis(event.target.value) }} disabled={isDetails}></input>
-                    <label for="floatingInputLibelle">Délai</label>
+                <form className="mx-3 d-flex align-items-center justify-content-between form-floating" style={{ width: "20%" }}>
+                    <input type="date" className="form-control w-100" id="floatingInputLibelle" placeholder={'Date liv. prévue'} value={dateprvAchat} onChange={(event) => { setDateprvAchat(event.target.value) }} disabled={isDetails}></input>
+                    <label for="floatingInputLibelle">Date liv. prévue</label>
+                </form>
+                <form className="mx-3 d-flex align-items-center justify-content-between form-floating" style={{ width: "20%" }}>
+                    <input type="date" className="form-control w-100" id="floatingInputLibelle" placeholder={'Date liv. réelle'} value={daterlAchat} onChange={(event) => { setDaterlAchat(event.target.value) }} disabled={isDetails}></input>
+                    <label for="floatingInputLibelle">Date liv. réelle</label>
                 </form>
             </div>
         </div>
@@ -364,8 +372,8 @@ function Devis(props) {
                                 <div className="mx-3 border-end border-2 px-3 listQte text-truncate">{elem.unite}</div>
                                 <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">
                                     <form className="mx-3 d-flex align-items-center justify-content-between form-floating" style={{ width: "90%" }}>
-                                        <input type="number" className="form-control w-100" placeholder={'Prix de vente'} value={listePiece[index].prix_vente} onChange={(event) => { changePrixVente(index, event.target.value) }} disabled={isDetails}></input>
-                                        <label>Prix de vente</label>
+                                        <input type="number" className="form-control w-100" placeholder={`Prix d'achat`} value={listePiece[index].prix_achat} onChange={(event) => { changePrixAchat(index, event.target.value) }} disabled={isDetails}></input>
+                                        <label>Prix d'achat</label>
                                     </form>
                                 </div>
                             </div>
@@ -376,14 +384,13 @@ function Devis(props) {
 
                         </div></>)
                 })}
-
             </div>
         </div>
 
         <div className='flex-grow-1'>
             <div className="w-100 d-flex justify-content-center mt-5 anim">
-                {provenance === "add" ? <button className="btn border border-2 px-4 button bg-primary" type="button" style={{ color: "#ffffff", }} onClick={() => { add() }}><FontAwesomeIcon icon="fa-solid fa-plus" />&nbsp;&nbsp; Ajouter un devis</button> : ""}
-                {provenance === "update" ? <button className="btn border border-2 px-4 button bg-primary" type="button" style={{ color: "#ffffff", }} onClick={() => { update(id) }}><FontAwesomeIcon icon="fa-solid fa-pen-to-square" style={{ color: "#ffffff", }} />&nbsp;&nbsp; Modifier un devis</button> : ""}
+                {provenance === "add" ? <button className="btn border border-2 px-4 button bg-primary" type="button" style={{ color: "#ffffff", }} onClick={() => { add() }}><FontAwesomeIcon icon="fa-solid fa-plus" />&nbsp;&nbsp; Ajouter une commande</button> : ""}
+                {provenance === "update" ? <button className="btn border border-2 px-4 button bg-primary" type="button" style={{ color: "#ffffff", }} onClick={() => { update(id) }}><FontAwesomeIcon icon="fa-solid fa-pen-to-square" style={{ color: "#ffffff", }} />&nbsp;&nbsp; Modifier une commande</button> : ""}
                 {provenance === "details" ? "" : ""}
             </div>
         </div>
@@ -391,4 +398,4 @@ function Devis(props) {
     );
 }
 
-export default Devis;
+export default CommandeAchat;

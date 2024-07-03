@@ -1,16 +1,14 @@
 import { useEffect, useState } from 'react';
 import '../../Style/App.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Tooltip from 'bootstrap/js/dist/tooltip';
 import Toast from 'bootstrap/js/dist/toast';
 import ToastAff from '../Toast';
 import Recherche from '../Vrac/Recherche';
 import Liste from '../Vrac/liste';
 
-function GammeList(props) {
+function CommandeVenteList(props) {
 
-    const [rechercheResult, setRechercheResult] = useState([{}])
-    const [rechercheInput, setRechercheInput] = useState("")
+    const [rechercheResult, setRechercheResult] = useState([])
 
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl))
@@ -19,27 +17,28 @@ function GammeList(props) {
     const [statutToast, setStatutToast] = useState('')
 
     useEffect(() => {
-        getAll();
-    }, [])
 
-    useEffect(() => {
+        getAll()
+
+        // Vérification du droit :
+        props.verifyDroit("Commerce")
+
         if (localStorage.getItem("Toast") === "success") {
             localStorage.setItem("Toast", "")
-            setInfoToast("Gamme créé avec succès")
+            setInfoToast("Commande créée avec succès")
             setStatutToast('success')
             new Toast(document.querySelector('.toast')).show()
         }
         if (localStorage.getItem("Toast") === "successUpdate") {
             localStorage.setItem("Toast", "")
-            setInfoToast("Gamme modifiée avec succès")
+            setInfoToast("Commande modifiée avec succès")
             setStatutToast('success')
             new Toast(document.querySelector('.toast')).show()
         }
-        props.verifyDroit("Atelier")
-    })
+    },[])
 
-    function getAll() {
-        fetch(`${process.env.REACT_APP_URL}/gamme/getAll`,
+    async function getAll() {
+        fetch(`${process.env.REACT_APP_URL}/commandevente/getAll`,
             {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
@@ -62,36 +61,14 @@ function GammeList(props) {
             });
     }
 
-    function deleteElem(id) {
-        if (window.confirm("Voulez-vous supprimer la gamme avec l'id : " + id)) {
-            fetch(`${process.env.REACT_APP_URL}/gamme/delete/${id}`,
-                {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
-                })
-                .then(response => response.json())
-                .then(() => {
-                    getAll()
-                    setInfoToast("Gamme supprimée avec succès")
-                    setStatutToast('success')
-                    new Toast(document.querySelector('.toast')).show()
-                })
-                .catch(error => {
-                    setInfoToast(error)
-                    setStatutToast('error')
-                    new Toast(document.querySelector('.toast')).show()
-                });
-        }
-    }
-
-    const recherche = (rechercheLib) => {
-        if(rechercheLib){
-            fetch(`${process.env.REACT_APP_URL}/gamme/rechLibelle`,
+    const recherche = (libelle) => {
+        if(libelle){
+            fetch(`${process.env.REACT_APP_URL}/commandevente/rechLibelle`,
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
                     body: JSON.stringify({
-                        libelle: rechercheLib,
+                        libelle: libelle,
                     })
                 })
                 .then(response => response.json())
@@ -114,16 +91,16 @@ function GammeList(props) {
         }else{
             getAll()
         }
-       
     }
 
     return (<>
         <ToastAff infoToast={infoToast} statutToast={statutToast}></ToastAff>
-        <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Liste des Gammes</h1></div>
-        <Recherche recherche={(rechercheLib) => recherche(rechercheLib)} prov="gamme" droit={props.droit}></Recherche>
-        <Liste rechercheResult={rechercheResult} deleteElem={(id) => deleteElem(id)} prov="gamme" droit={props.droit} uti_id={props.uti}></Liste>
+        
+        <div className="d-flex flex-column align-items-center w-100 anim" style={{ paddingTop: "100px" }}><h1>Liste des commandes de vente</h1></div>
+        <Recherche recherche={(libelle) => recherche(libelle)} prov="commandevente" droit={props.droit}></Recherche>
+        <Liste rechercheResult={rechercheResult} prov="commandevente" droit={props.droit} uti_id={props.uti}></Liste>
     </>
     );
 }
 
-export default GammeList;
+export default CommandeVenteList;

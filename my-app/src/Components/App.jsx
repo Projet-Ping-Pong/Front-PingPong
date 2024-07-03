@@ -27,6 +27,10 @@ import DroitList from './Droit/DroitList';
 import Droit from './Droit/Droit';
 import UtilisateurList from './Utilisateur/UtilisateurList';
 import Utilisateur from './Utilisateur/Utilisateur';
+import CommandeVenteList from './CommandeVente/CommandeVenteList';
+import CommandeVente from './CommandeVente/CommandeVente';
+import CommandeAchatList from './CommandeAchat/CommandeAchatList';
+import CommandeAchat from './CommandeAchat/CommandeAchat';
 
 function App() {
 
@@ -117,15 +121,21 @@ function App() {
               <Route path="/fabrications"             element={<Fabrication               uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
               <Route path="/realisations"             element={<RealisationListe          uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
               <Route path="/realisationsCRUD"         element={<Realisation               uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+              
               <Route path="/clientsfournisseurs"      element={<ClientFournisseurList     uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
               <Route path="/clientsfournisseursCRUD"  element={<ClientFournisseur         uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
               <Route path="/devis"                    element={<DevisList                 uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
               <Route path="/devisCRUD"                element={<Devis                     uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+              <Route path="/commandesventes"          element={<CommandeVenteList         uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+              <Route path="/commandesventesCRUD"      element={<CommandeVente             uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+              <Route path="/commandesachats"          element={<CommandeAchatList         uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+              <Route path="/commandesachatsCRUD"      element={<CommandeAchat             uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
 
               <Route path="/droits"                   element={<DroitList                 uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
               <Route path="/droitsCRUD"               element={<Droit                     uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
               <Route path="/utilisateurs"             element={<UtilisateurList           uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
               <Route path="/utilisateursCRUD"         element={<Utilisateur               uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+            
             </Routes>
           </BrowserRouter>
           <Footer />
