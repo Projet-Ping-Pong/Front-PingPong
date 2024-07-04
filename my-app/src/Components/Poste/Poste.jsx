@@ -175,7 +175,8 @@ function Poste(props) {
         if (rechercheResult2.find((rechercheResult2) => rechercheResult2.id === id) === undefined) {
             const tab = [...rechercheResult2, {
                 id: id,
-                libelle: libelle
+                libelle: libelle,
+                new : true
             }]
             setRechercheResult2(tab)
             setRechercheResult([])
@@ -188,35 +189,44 @@ function Poste(props) {
     }
 
     function deleteList(id, id_poste, id_machine) {
-        if (window.confirm("Voulez-vous supprimer la liaison de la machine avec l'id : " + id_machine + "\nAttention cette action est irreversible")) {
-            fetch(`${process.env.REACT_APP_URL}/postemachine/delete`,
-                {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
-                    body: JSON.stringify({
-                        id_poste: id_poste,
-                        id_machine: id_machine,
+        if ((provenance === "update" || provenance === "details")  && !rechercheResult2[id].new) {
+            if (window.confirm("Voulez-vous supprimer la liaison de la machine avec l'id : " + id_machine + "\nAttention cette action est irreversible")) {
+                fetch(`${process.env.REACT_APP_URL}/postemachine/delete`,
+                    {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
+                        body: JSON.stringify({
+                            id_poste: id_poste,
+                            id_machine: id_machine,
+                        })
                     })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.erreur != null) {
-                        // Erreur, phrase définie dans le back
-                        setInfoToast(data.erreur)
-                        setStatutToast('error')
-                        new Toast(document.querySelector('.toast')).show()
-                    } else {
-                        const tab = [...rechercheResult2]
-                        tab.splice(id, 1)
-                        setRechercheResult2(tab)
-                        setInfoToast("Liaison supprimée avec succès")
-                        setStatutToast('success')
-                        new Toast(document.querySelector('.toast')).show()
-                    }
-                })
-                .catch(error => {
-                    console.log(error)
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.erreur != null) {
+                            // Erreur, phrase définie dans le back
+                            setInfoToast(data.erreur)
+                            setStatutToast('error')
+                            new Toast(document.querySelector('.toast')).show()
+                        } else {
+                            const tab = [...rechercheResult2]
+                            tab.splice(id, 1)
+                            setRechercheResult2(tab)
+                            setInfoToast("Liaison supprimée avec succès")
+                            setStatutToast('success')
+                            new Toast(document.querySelector('.toast')).show()
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    });
+            }
+        }else {
+            const tab = [...rechercheResult2]
+            tab.splice(id, 1)
+            setRechercheResult2(tab)
+            setInfoToast("Liaison supprimée avec succès")
+            setStatutToast('success')
+            new Toast(document.querySelector('.toast')).show()
         }
     }
 

@@ -23,12 +23,12 @@ function Operation(props) {
     const [rechercheResultPosteAff, setRechercheResultPosteAff] = useState([])
 
     useEffect(() => {
-        if(!provenance){
+        if (!provenance) {
             window.location.href = '/accueil';
         }
         sessionStorage.removeItem("Provenance")
         props.verifyDroit("Atelier")
-    },[])
+    }, [])
 
     useEffect(() => {
         const search = window.location.search; // returns the URL query String
@@ -53,11 +53,16 @@ function Operation(props) {
                         setStatutToast('error')
                         new Toast(document.querySelector('.toast')).show()
                     } else {
+                        console.log(data);
                         setLibelle(data.operation.libelle)
                         setTemps(data.operation.temps)
                         setDescription(data.operation.description)
-                        if (data.poste != null) { setRechercheResultPosteAff([data.poste]) }
-                        if (data.machine != null) { setRechercheResultMachineAff([data.machine]) }
+                        if (data.poste.id) { 
+                            setRechercheResultPosteAff([data.poste]) 
+                        }
+                        if (data.machine.id) { 
+                            setRechercheResultMachineAff([data.machine]) 
+                        }
                     }
                 })
                 .catch(error => {
@@ -75,37 +80,43 @@ function Operation(props) {
             setStatutToast('error')
             new Toast(document.querySelector('.toast')).show()
         } else {
-            fetch(`${process.env.REACT_APP_URL}/operation/add`,
-                {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
-                    body: JSON.stringify({
-                        libelle: libelle,
-                        description: description,
-                        temps: temps,
-                        id_poste: rechercheResultPosteAff.length>0?rechercheResultPosteAff[0].id:null,
-                        id_machine: rechercheResultMachineAff.length>0?rechercheResultMachineAff[0].id:null
+            if (temps === "" || temps === null) {
+                setInfoToast("Le temps est vide")
+                setStatutToast('error')
+                new Toast(document.querySelector('.toast')).show()
+            } else {
+                fetch(`${process.env.REACT_APP_URL}/operation/add`,
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
+                        body: JSON.stringify({
+                            libelle: libelle,
+                            description: description,
+                            temps: temps,
+                            id_poste: rechercheResultPosteAff.length > 0 ? rechercheResultPosteAff[0].id : null,
+                            id_machine: rechercheResultMachineAff.length > 0 ? rechercheResultMachineAff[0].id : null
+                        })
                     })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.erreur != null) {
-                        // Erreur, phrase définie dans le back
-                        setInfoToast(data.erreur)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.erreur != null) {
+                            // Erreur, phrase définie dans le back
+                            setInfoToast(data.erreur)
+                            setStatutToast('error')
+                            new Toast(document.querySelector('.toast')).show()
+                        } else {
+                            // Success, Vous êtes bien connecté(e)
+                            localStorage.setItem("Toast", "success")
+                            window.location.href = '/operations'
+                        }
+                    })
+                    .catch(error => {
+                        setInfoToast(error.body)
                         setStatutToast('error')
                         new Toast(document.querySelector('.toast')).show()
-                    } else {
-                        // Success, Vous êtes bien connecté(e)
-                        localStorage.setItem("Toast", "success")
-                        window.location.href = '/operations'
-                    }
-                })
-                .catch(error => {
-                    setInfoToast(error.body)
-                    setStatutToast('error')
-                    new Toast(document.querySelector('.toast')).show()
-                });
+                    });
 
+            }
         }
     }
 

@@ -98,7 +98,7 @@ function Facture() {
                         setListeAllPiece(data.listePiece)
                         let prix = 0
                         data.listePiece.forEach(element => {
-                            prix = prix + (element.quantite * element.prix_achat)
+                            prix = prix + (element.quantite * element.prix_vente)
                         });
                         setPrixTot(prix)
                         
@@ -147,8 +147,8 @@ function Facture() {
                                 <tr>
                                     <td> {elem.libelle} </td>
                                     <td> {elem.quantite} </td>
-                                    <td> {elem.prix_achat} €</td>
-                                    <td> {elem.quantite * elem.prix_achat} €</td>
+                                    <td> {provenance==="achat"?elem.prix_achat:elem.prix_vente} €</td>
+                                    <td> {elem.quantite * (provenance==="achat"?elem.prix_achat:elem.prix_vente)} €</td>
                                 </tr></>)
                         })}
                     </tbody>

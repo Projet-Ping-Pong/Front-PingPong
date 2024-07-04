@@ -76,11 +76,13 @@ function App() {
   },[decodedToken])
 
   function verifyDroit(service){
+    console.log(service);
+    console.log(utiDroit);
     if(utiDroit){
-      if(service === "Atelier" && (utiDroit !== "Atelier" && utiDroit !== "RespAtelier")){
+      if(service === "Atelier" && (utiDroit !== "Atelier" && utiDroit !== "RespAtelier" && utiDroit !== "Admin")){
         window.location.href = '/accueil';
       }
-      if(service === "Commerce" && utiDroit !== "Commerce"){
+      if(service === "Commerce" && (utiDroit !== "Commerce" && utiDroit !== "Admin")){
         window.location.href = '/accueil';
       }
       if(service === "Admin" && utiDroit !== "Admin"){

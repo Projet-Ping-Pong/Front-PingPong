@@ -27,12 +27,12 @@ function Gamme(props) {
     const [rechercheResultResponsableAff, setRechercheResultResponsableAff] = useState([])
 
     useEffect(() => {
-        if(!provenance){
+        if (!provenance) {
             window.location.href = '/accueil';
         }
         sessionStorage.removeItem("Provenance")
         props.verifyDroit("Atelier")
-    },[])
+    }, [])
 
     useEffect(() => {
         const search = window.location.search; // returns the URL query String
@@ -62,11 +62,11 @@ function Gamme(props) {
                         setDescription(data.gamme.description)
                         setResp(data.gamme.responsable)
                         setRechercheResultOperationAff(data.operations)
-                        if(data.piece){
+                        if (data.piece) {
                             setRef(data.piece.libelle)
                             addListePiece(data.piece.id, data.piece.libelle)
                         }
-                        if(data.utilisateur){
+                        if (data.utilisateur) {
                             setResp(data.utilisateur.nom_uti)
                             addListeResponsable(data.utilisateur.id, data.utilisateur.nom_uti)
                         }
@@ -87,34 +87,41 @@ function Gamme(props) {
             setStatutToast('error')
             new Toast(document.querySelector('.toast')).show()
         } else {
-            fetch(`${process.env.REACT_APP_URL}/gamme/add`,
-                {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
-                    body: JSON.stringify({
-                        libelle: libelle,
-                        description: description,
-                        responsable: rechercheResultResponsableAff[0].id,
-                        id_piece: rechercheResultPieceAff.id,
-                        operationList: rechercheResultOperationAff
+            if (rechercheResultResponsableAff[0]) {
+                fetch(`${process.env.REACT_APP_URL}/gamme/add`,
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
+                        body: JSON.stringify({
+                            libelle: libelle,
+                            description: description,
+                            responsable: rechercheResultResponsableAff[0].id,
+                            id_piece: rechercheResultPieceAff.id,
+                            operationList: rechercheResultOperationAff
+                        })
                     })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.erreur != null) {
-                        // Erreur, phrase définie dans le back
-                        setInfoToast(data.erreur)
-                        setStatutToast('error')
-                        new Toast(document.querySelector('.toast')).show()
-                    } else {
-                        localStorage.setItem("Toast", "success")
-                        window.location.href = '/gammes'
-                    }
-                })
-                .catch(error => {
-                    console.log(error);
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.erreur != null) {
+                            // Erreur, phrase définie dans le back
+                            setInfoToast(data.erreur)
+                            setStatutToast('error')
+                            new Toast(document.querySelector('.toast')).show()
+                        } else {
+                            localStorage.setItem("Toast", "success")
+                            window.location.href = '/gammes'
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            }else{
+                setInfoToast("Le Responsable est vide")
+                setStatutToast('error')
+                new Toast(document.querySelector('.toast')).show()
+            }
         }
+
     }
 
     function update(id) {
@@ -126,8 +133,8 @@ function Gamme(props) {
                 body: JSON.stringify({
                     libelle: libelle,
                     description: description,
-                    id_piece: rechercheResultPieceAff.length>0?rechercheResultPieceAff[0].id:null,
-                    responsable: rechercheResultResponsableAff.length>0?rechercheResultResponsableAff[0].id:null,
+                    id_piece: rechercheResultPieceAff.length > 0 ? rechercheResultPieceAff[0].id : null,
+                    responsable: rechercheResultResponsableAff.length > 0 ? rechercheResultResponsableAff[0].id : null,
                     operationList: rechercheResultOperationAff
                 })
             })
@@ -403,7 +410,7 @@ function Gamme(props) {
                             <div className="mx-3 border-end border-2 px-3 listLibelle text-truncate">{elem.libelle}</div>
                         </div>
                         {provenance !== "details" ? <div className="mx-3 w-25 d-flex justify-content-end">
-                            <button onClick={() => { console.log("------------------- index : " + index + "id : " + id + "elem.id : " + elem.id) ;deleteListOperation(index, id, elem.id) }} className="btn border border-2 mx-1 button bg-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                            <button onClick={() => { console.log("------------------- index : " + index + "id : " + id + "elem.id : " + elem.id); deleteListOperation(index, id, elem.id) }} className="btn border border-2 mx-1 button bg-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
                                 data-bs-title="Supprimer"><FontAwesomeIcon icon="fa-solid fa-trash" style={{ color: "#ffffff", }} /></button>
                         </div> : ""}
 

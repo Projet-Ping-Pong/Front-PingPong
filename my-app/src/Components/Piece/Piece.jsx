@@ -29,7 +29,7 @@ function PieceAjout(props) {
     const [type, setType] = useState(0)
 
     const [rechercheResultFournisseur, setRechercheResultFournisseur] = useState([])
-    const [idFournisseur, setIdFournisseur] = useState("")
+    const [idFournisseur, setIdFournisseur] = useState()
 
     const [rechercheResultGamme, setRechercheResultGamme] = useState([])
     const [rechercheResultGamme2, setRechercheResultGamme2] = useState([])
@@ -108,8 +108,8 @@ function PieceAjout(props) {
                 setStatutToast('error')
                 new Toast(document.querySelector('.toast')).show()
             } else {
+                let tabCompo = []
                 if (type != 3 && type != 4 && type != 0) {
-                    var tabCompo = []
                     rechercheResultPiece2.forEach(element => {
                         const id = document.getElementById(`id` + element.id).innerHTML
                         const quantite = document.getElementById(`quantite` + element.id).value != "" ? document.getElementById(`quantite` + element.id).value : 0
@@ -119,39 +119,40 @@ function PieceAjout(props) {
                         }]
                     })
 
-                    fetch(`${process.env.REACT_APP_URL}/piece/add`,
-                        {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
-                            body: JSON.stringify({
-                                libelle: libelle,
-                                prix_vente: prixVente,
-                                prix_catalogue: prixAchat,
-                                stock: quantite,
-                                unite: unite,
-                                type: type,
-                                id_gamme: rechercheResultGamme2.length > 0 ? rechercheResultGamme2[0].id : null,
-                                id_fournisseur: idFournisseur,
-                                listCompo: tabCompo,
-                            })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.erreur != null) {
-                                // Erreur, phrase définie dans le back
-                                setInfoToast(data.erreur)
-                                setStatutToast('error')
-                                new Toast(document.querySelector('.toast')).show()
-                            } else {
-                                // Success, Vous êtes bien connecté(e)
-                                localStorage.setItem("Toast", "success")
-                                window.location.href = '/pieces'
-                            }
-                        })
-                        .catch(error => {
-                            console.log(error);
-                        });
+                    
                 }
+                fetch(`${process.env.REACT_APP_URL}/piece/add`,
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
+                        body: JSON.stringify({
+                            libelle: libelle,
+                            prix_vente: parseFloat(prixVente),
+                            prix_catalogue: parseFloat(prixAchat),
+                            stock: quantite,
+                            unite: unite,
+                            type: type,
+                            id_gamme: rechercheResultGamme2.length > 0 ? rechercheResultGamme2[0].id : null,
+                            id_fournisseur: idFournisseur,
+                            listCompo: tabCompo,
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.erreur != null) {
+                            // Erreur, phrase définie dans le back
+                            setInfoToast(data.erreur)
+                            setStatutToast('error')
+                            new Toast(document.querySelector('.toast')).show()
+                        } else {
+                            // Success, Vous êtes bien connecté(e)
+                            localStorage.setItem("Toast", "success")
+                            window.location.href = '/pieces'
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
             }
         }
 
