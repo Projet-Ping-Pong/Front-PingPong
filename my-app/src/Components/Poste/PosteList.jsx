@@ -9,7 +9,6 @@ import Liste from '../Vrac/liste';
 function PosteList(props) {
 
     const [rechercheResult, setRechercheResult] = useState([{}])
-    const [rechercheInput, setRechercheInput] = useState("")
 
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl))
@@ -36,34 +35,6 @@ function PosteList(props) {
         }
         props.verifyDroit("Atelier")
     })
-
-    useEffect(() => {
-        if (rechercheInput !== "" || rechercheInput !== null) {
-            fetch(`${process.env.REACT_APP_URL}/poste/rechLibelle`,
-                {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
-                    body: JSON.stringify({
-                        libelle: rechercheInput,
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.erreur != null) {
-                        // Erreur, phrase définie dans le back
-                        setInfoToast(data.erreur)
-                        setStatutToast('error')
-                        new Toast(document.querySelector('.toast')).show()
-                    } else {
-                        setRechercheResult(data)
-                    }
-
-                })
-                .catch(error => {
-                    console.log(error)
-                });
-        }
-    }, [rechercheInput])
 
     function getAll() {
         fetch(`${process.env.REACT_APP_URL}/poste/getAll`,
@@ -109,29 +80,35 @@ function PosteList(props) {
     }
 
     const recherche = (rechercheLib) => {
-        fetch(`${process.env.REACT_APP_URL}/poste/rechLibelle`,
-            {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
-                body: JSON.stringify({
-                    libelle: rechercheLib,
+        if(rechercheLib){
+            fetch(`${process.env.REACT_APP_URL}/poste/rechLibelle`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
+                    body: JSON.stringify({
+                        libelle: rechercheLib,
+                    })
                 })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.erreur != null) {
-                    // Erreur, phrase définie dans le back
-                    setInfoToast(data.erreur)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.erreur != null) {
+                        // Erreur, phrase définie dans le back
+                        setInfoToast(data.erreur)
+                        setStatutToast('error')
+                        new Toast(document.querySelector('.toast')).show()
+                    } else {
+                        setRechercheResult(data)
+                    }
+    
+                })
+                .catch(error => {
+                    setInfoToast(error)
                     setStatutToast('error')
                     new Toast(document.querySelector('.toast')).show()
-                } else {
-                    setRechercheResult(data)
-                }
-
-            })
-            .catch(error => {
-                console.log(error)
-            });
+                });
+        }else{
+            getAll()
+        }
     }
 
     return (<>

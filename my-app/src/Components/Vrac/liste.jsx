@@ -146,14 +146,16 @@ function Liste(props) {
                     <>
                         <button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "details") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Détails"><FontAwesomeIcon icon="fa-solid fa-magnifying-glass" style={{ color: "#ffffff", }} /></button>
                         <button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "update") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Modifier"><FontAwesomeIcon icon="fa-solid fa-pen-to-square" style={{ color: "#ffffff", }} /></button>
+                        <button onClick={() => { window.location.href = `/factures?id=${elem.id}`; sessionStorage.setItem("Provenance", "vente") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Modifier"><FontAwesomeIcon icon="fa-solid fa-file-pdf" style={{ color: "#ffffff", }}/></button>
                     </>
                 )
         }
         if (props.prov === "commandeachat") {
-            if(elem.date_liv_reelle <= Date.now()){
+            if(elem.date_liv_reelle){
                 return (
                     <>
                         <button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "details") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Détails"><FontAwesomeIcon icon="fa-solid fa-magnifying-glass" style={{ color: "#ffffff", }} /></button>
+                        <button onClick={() => { window.location.href = `/factures?id=${elem.id}`; sessionStorage.setItem("Provenance", "achat") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Modifier"><FontAwesomeIcon icon="fa-solid fa-file-pdf" style={{ color: "#ffffff", }}/></button>
                     </>
                 )
             }else{
@@ -161,6 +163,7 @@ function Liste(props) {
                     <>
                         <button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "details") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Détails"><FontAwesomeIcon icon="fa-solid fa-magnifying-glass" style={{ color: "#ffffff", }} /></button>
                         <button onClick={() => { buttonChangeProv(elem.id); sessionStorage.setItem("Provenance", "update") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Modifier"><FontAwesomeIcon icon="fa-solid fa-pen-to-square" style={{ color: "#ffffff", }} /></button>
+                        <button onClick={() => { window.location.href = `/factures?id=${elem.id}`; sessionStorage.setItem("Provenance", "achat") }} className="btn border border-2 mx-1 button bg-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Modifier"><FontAwesomeIcon icon="fa-solid fa-file-pdf" style={{ color: "#ffffff", }}/></button>
                     </>
                 )
             }

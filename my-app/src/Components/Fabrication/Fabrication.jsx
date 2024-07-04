@@ -28,7 +28,7 @@ function Fabrication(props) {
     const [tabRea, setTabRea] = useState([])
 
     useEffect(() => {
-        if(rechercheResultPoste[0]){
+        if(rechercheResultPosteAff[0]){
             setDisableMachine(false)
         }else{
             setDisableMachine(true)
@@ -124,6 +124,7 @@ function Fabrication(props) {
                         setStatutToast('error')
                         new Toast(document.querySelector('.toast')).show()
                     } else {
+                        console.log(data);
                         setRechercheResultMachine(data)
                     }
 

@@ -58,6 +58,7 @@ function CommandeAchat(props) {
                             setStatutToast('error')
                             new Toast(document.querySelector('.toast')).show()
                         } else {
+                            console.log(data);
                             addFournisseur(data.commande.id_fournisseur, data.commande.fournisseur)
                             setLibelleAchat(data.commande.libelle)
                             setDateAchat(data.commande.date)
@@ -85,9 +86,9 @@ function CommandeAchat(props) {
                 body: JSON.stringify({
                     commandeAchat: {
                         libelle: libelleAchat,
-                        date_liv_prevue: dateprvAchat,
-                        date_liv_reelle: daterlAchat,
-                        date: dateAchat,
+                        date_liv_prevue: dateprvAchat?dateprvAchat:null,
+                        date_liv_reelle: daterlAchat?daterlAchat:null,
+                        date: dateAchat?dateAchat:null,
                         id_fournisseur: idFournisseur
                     },
                     listePiece: listePiece
@@ -113,6 +114,7 @@ function CommandeAchat(props) {
     }
 
     function update(id) {
+        console.log(listePiece);
         fetch(`${process.env.REACT_APP_URL}/commandeachat/update/${id}`,
             {
                 method: 'PUT',
@@ -120,9 +122,9 @@ function CommandeAchat(props) {
                 body: JSON.stringify({
                     commandeAchat: {
                         libelle: libelleAchat,
-                        date_liv_prevue: dateprvAchat,
-                        date_liv_reelle: daterlAchat,
-                        date: dateAchat,
+                        date_liv_prevue: dateprvAchat?dateprvAchat:null,
+                        date_liv_reelle: daterlAchat?daterlAchat:null,
+                        date: dateAchat?dateAchat:null,
                         id_fournisseur: idFournisseur
                     },
                     listePiece: listePiece
@@ -348,7 +350,7 @@ function CommandeAchat(props) {
                         {rechercheResultPiece.length > 0 && <div className="input-group w-50 anim border border-2">
                             {rechercheResultPiece.map((elem, index) => {
                                 return (<>
-                                    <div key={index} onClick={() => { addListePiece(elem.id, elem.libelle, elem.unite, elem.prix_vente) }} className="d-flex align-items-center my-1 mx-2 rechercheListe w-100">
+                                    <div key={index} onClick={() => { addListePiece(elem.id, elem.libelle, elem.unite, elem.prix_achat) }} className="d-flex align-items-center my-1 mx-2 rechercheListe w-100">
                                         <div className='mx-2'><b>{elem.id}</b> - {elem.libelle}</div>
                                     </div></>)
                             })}

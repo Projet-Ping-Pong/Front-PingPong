@@ -84,7 +84,7 @@ function Devis(props) {
                     devis: {
                         libelle: libelleDevis,
                         delai: delaiDevis,
-                        date: dateDevis,
+                        date: dateDevis?dateDevis:null,
                         id_client: idClient
                     },
                     listePiece: listePiece
@@ -118,7 +118,7 @@ function Devis(props) {
                     devis: {
                         libelle: libelleDevis,
                         delai: delaiDevis,
-                        date: dateDevis,
+                        date: dateDevis?dateDevis:null,
                         id_client: idClient
                     },
                     listePiece: listePiece

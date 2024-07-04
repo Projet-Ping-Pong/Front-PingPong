@@ -31,6 +31,8 @@ import CommandeVenteList from './CommandeVente/CommandeVenteList';
 import CommandeVente from './CommandeVente/CommandeVente';
 import CommandeAchatList from './CommandeAchat/CommandeAchatList';
 import CommandeAchat from './CommandeAchat/CommandeAchat';
+import Compte from './Utilisateur/Compte';
+import Facture from './Facture/Facture';
 
 function App() {
 
@@ -78,26 +80,14 @@ function App() {
       if(service === "Atelier" && (utiDroit !== "Atelier" && utiDroit !== "RespAtelier")){
         window.location.href = '/accueil';
       }
-      if(!service === "Commerce" && utiDroit !== "Commerce"){
+      if(service === "Commerce" && utiDroit !== "Commerce"){
         window.location.href = '/accueil';
       }
-      if(!service === "Admin" && utiDroit !== "Admin"){
+      if(service === "Admin" && utiDroit !== "Admin"){
         window.location.href = '/accueil';
       }
     }
   }
-
-  // function fetchRoute(url, method, authorization, body){
-  //   fetch(url,
-  //     {
-  //       method: method,
-  //       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
-  //       body: JSON.stringify(body)
-  //     })
-  //     .then(response => response.json())
-  //     .then(data => { console.log(data); return data })
-  //     .catch(error => { return error });
-  // }
 
   return (
     <>
@@ -108,6 +98,8 @@ function App() {
             <Routes>
               <Route path="/"                         element={<Accueil                   uti={utiInfo}       droit={utiDroit}    service={utiService} />} />
               <Route path="/accueil"                  element={<Accueil                   uti={utiInfo}       droit={utiDroit}    service={utiService} />} />
+              <Route path="/compte"                   element={<Compte                    uti={utiInfo}       droit={utiDroit} />} />
+
               <Route path="/pieces"                   element={<PieceList                 uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
               <Route path="/piecesCRUD"               element={<Piece                     uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
               <Route path="/machines"                 element={<MachineList               uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
@@ -130,12 +122,12 @@ function App() {
               <Route path="/commandesventesCRUD"      element={<CommandeVente             uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
               <Route path="/commandesachats"          element={<CommandeAchatList         uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
               <Route path="/commandesachatsCRUD"      element={<CommandeAchat             uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
+              <Route path="/factures"                 element={<Facture/>} />
 
               <Route path="/droits"                   element={<DroitList                 uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
               <Route path="/droitsCRUD"               element={<Droit                     uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
               <Route path="/utilisateurs"             element={<UtilisateurList           uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
               <Route path="/utilisateursCRUD"         element={<Utilisateur               uti={utiInfo}       droit={utiDroit}    verifyDroit={(service) => verifyDroit(service)} />} />
-            
             </Routes>
           </BrowserRouter>
           <Footer />

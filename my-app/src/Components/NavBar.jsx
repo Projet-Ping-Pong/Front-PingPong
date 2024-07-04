@@ -133,7 +133,7 @@ function NavBar(props) {
                             <span className="navbar-toggler-icon"></span>
                         </button>
 
-                        <button className="nav-link active text-body p-2 btn border border-2 button px-4" type="button"><FontAwesomeIcon icon="fa-solid fa-user" />&nbsp;&nbsp; {localStorage.getItem("Nom_uti")}</button>
+                        <a href='/compte' className='nav-link'><button className="nav-link active text-body p-2 btn border border-2 button px-4" type="button"><FontAwesomeIcon icon="fa-solid fa-user" />&nbsp;&nbsp; {localStorage.getItem("Nom_uti")}</button></a>
                         <button className="nav-link active mx-4 text-body border-start ps-4 border-2" aria-current="page" onClick={() => { logout() }}><FontAwesomeIcon icon="fa-solid fa-right-to-bracket" /></button>
                     </div>
                 </div>

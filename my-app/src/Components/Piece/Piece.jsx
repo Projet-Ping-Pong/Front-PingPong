@@ -11,7 +11,8 @@ function PieceAjout(props) {
     const [disablePrixAchat, setDisablePrixAchat] = useState(true)
     const [disableGamme, setDisableGamme] = useState(false)
     const [disableCompo, setDisableCompo] = useState(false)
-
+    const [disableFournisseur, setDisableFournisseur] = useState(false)
+    
     const [provenance] = useState(sessionStorage.getItem("Provenance"))
 
     const [infoToast, setInfoToast] = useState("")
@@ -27,6 +28,9 @@ function PieceAjout(props) {
     const [unite, setUnite] = useState("")
     const [type, setType] = useState(0)
 
+    const [rechercheResultFournisseur, setRechercheResultFournisseur] = useState([])
+    const [idFournisseur, setIdFournisseur] = useState("")
+
     const [rechercheResultGamme, setRechercheResultGamme] = useState([])
     const [rechercheResultGamme2, setRechercheResultGamme2] = useState([])
 
@@ -34,7 +38,6 @@ function PieceAjout(props) {
     const [rechercheResultPiece2, setRechercheResultPiece2] = useState([])
 
     useEffect(() => {
-        typeListe()
         if (!provenance) {
             window.location.href = '/accueil';
         }
@@ -73,12 +76,15 @@ function PieceAjout(props) {
                         setQuantite(data.piece.stock)
                         setUnite(data.piece.unite)
                         setType(data.piece.type)
-                        typeListe()
-                        if(data.gamme){
+                        typeListe(data.piece.type)
+                        if (data.gamme) {
                             setRechercheResultGamme2([data.gamme])
                         }
-                        if(data.piececompo){
+                        if (data.piececompo) {
                             setRechercheResultPiece2(data.piececompo)
+                        }
+                        if (data.fournisseur) {
+                            addFournisseur(data.fournisseur.id, data.fournisseur.raison_sociale)
                         }
                     }
                 })
@@ -125,7 +131,8 @@ function PieceAjout(props) {
                                 unite: unite,
                                 type: type,
                                 id_gamme: rechercheResultGamme2.length > 0 ? rechercheResultGamme2[0].id : null,
-                                listCompo: tabCompo
+                                id_fournisseur: idFournisseur,
+                                listCompo: tabCompo,
                             })
                         })
                         .then(response => response.json())
@@ -175,7 +182,8 @@ function PieceAjout(props) {
                     unite: unite,
                     type: type,
                     id_gamme: rechercheResultGamme2.length > 0 ? rechercheResultGamme2[0].id : null,
-                    listCompo: tabCompo
+                    id_fournisseur: idFournisseur,
+                    listCompo: tabCompo,
                 })
             })
             .then(response => response.json())
@@ -336,24 +344,24 @@ function PieceAjout(props) {
         }
     }
 
-    function typeListe() {
-        if (document.getElementById('selectType').value == 0) {
-            setDisablePrixAchat(true); setDisablePrixVente(true); setDisableGamme(true); setDisableCompo(true)
+    function typeListe(type) {
+        if (type == 0) {
+            setDisablePrixAchat(true); setDisablePrixVente(true); setDisableGamme(true); setDisableCompo(true); setDisableFournisseur(true)
         }
-        if (document.getElementById('selectType').value == 1) {
-            setDisablePrixAchat(true); setDisablePrixVente(false); setDisableGamme(false); setDisableCompo(false)
-            setPrixAchat("")
+        if (type == 1) {
+            setDisablePrixAchat(true); setDisablePrixVente(false); setDisableGamme(false); setDisableCompo(false); setDisableFournisseur(true)
+            setPrixAchat(""); document.getElementById("rechercheFournisseur").value = ""; setIdFournisseur()
         }
-        if (document.getElementById('selectType').value == 2) {
-            setDisablePrixAchat(true); setDisablePrixVente(true); setDisableGamme(false); setDisableCompo(false)
-            setPrixAchat(""); setPrixVente("")
+        if (type == 2) {
+            setDisablePrixAchat(true); setDisablePrixVente(true); setDisableGamme(false); setDisableCompo(false); setDisableFournisseur(true)
+            setPrixAchat(""); setPrixVente(""); document.getElementById("rechercheFournisseur").value = ""; setIdFournisseur()
         }
-        if (document.getElementById('selectType').value == 3) {
-            setDisablePrixAchat(true); setDisablePrixVente(true); setDisableGamme(true); setDisableCompo(true)
-            setPrixAchat(""); setPrixVente("")
+        if (type == 3) {
+            setDisablePrixAchat(false); setDisablePrixVente(true); setDisableGamme(true); setDisableCompo(true); setDisableFournisseur(false)
+            setPrixVente("")
         }
-        if (document.getElementById('selectType').value == 4) {
-            setDisablePrixAchat(false); setDisablePrixVente(true); setDisableGamme(true); setDisableCompo(true)
+        if (type == 4) {
+            setDisablePrixAchat(false); setDisablePrixVente(true); setDisableGamme(true); setDisableCompo(true); setDisableFournisseur(false)
             setPrixVente("")
         }
     }
@@ -362,6 +370,43 @@ function PieceAjout(props) {
         const tabPiece = [...rechercheResultPiece2]
         tabPiece[index].quantite = event.target.value
         setRechercheResultPiece2(tabPiece)
+    }
+
+    function rechercheFournisseur(raison_sociale) {
+        if (raison_sociale) {
+            fetch(`${process.env.REACT_APP_URL}/fournisseur/rechRaisonSociale`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('Token')}` },
+                    body: JSON.stringify({
+                        raison_sociale: raison_sociale,
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.erreur != null) {
+                        // Erreur, phrase définie dans le back
+                        setInfoToast(data.erreur)
+                        setStatutToast('error')
+                        new Toast(document.querySelector('.toast')).show()
+                    } else {
+                        setRechercheResultFournisseur(data)
+                    }
+                })
+                .catch(error => {
+                    setInfoToast(error)
+                    setStatutToast('error')
+                    new Toast(document.querySelector('.toast')).show()
+                });
+        } else {
+            setRechercheResultFournisseur([])
+        }
+    }
+
+    function addFournisseur(id, raison_sociale) {
+        setIdFournisseur(id)
+        document.getElementById("rechercheFournisseur").value = raison_sociale
+        setRechercheResultFournisseur([])
     }
 
     return (<>
@@ -408,17 +453,43 @@ function PieceAjout(props) {
                 </div>
             </div>
             <div className="d-flex flex-wrap bg-body-secondary list carte" style={{ width: "85%", height: '5%' }}>
-                <div className="mx-3 d-flex align-items-center justify-content-between w-100 form-floating">
-                    <select className="form-select w-25" id='selectType' value={type} disabled={isDetails} onChange={(event) => { setType(event.target.value); typeListe() }}>
-                        <option disabled value={0}>Type</option>
-                        <option value={1}>Livrable</option>
-                        <option value={2}>Intermédiaire</option>
-                        <option value={3}>Matière Première</option>
-                        <option value={4}>Achetée</option>
-                    </select>
-                    <label>Type</label>
+                <div className="mx-3 d-flex align-items-center justify-content-between w-100">
+                    <div className="d-flex align-items-center justify-content-between w-25 form-floating">
+                        <select className="form-select w-100" id='selectType' value={type} disabled={isDetails} onChange={(event) => { setType(event.target.value); typeListe(event.target.value) }}>
+                            <option disabled value={0}>Type</option>
+                            <option value={1}>Livrable</option>
+                            <option value={2}>Intermédiaire</option>
+                            <option value={3}>Matière Première</option>
+                            <option value={4}>Achetée</option>
+                        </select>
+                        <label>Type</label>
+                    </div>
+                    <form className="d-flex flex-wrap align-items-center justify-content-between form-floating w-25">
+                        <input type="text" className="form-control w-100" placeholder={'Fournisseur'} id="rechercheFournisseur" onChange={debounce((event) => { rechercheFournisseur(event.target.value) }, 500)} disabled={disableFournisseur}></input>
+                        <label>Fournisseur</label>
+                        <div className="d-flex flex-column align-items-center w-100">
+                            <div className="d-flex align-items-center justify-content-between" style={{ width: "100%" }}>
+                                {
+                                    rechercheResultFournisseur.length > 0 &&
+                                    <div className="input-group anim border border-2">
+                                        {rechercheResultFournisseur.map((elem) => {
+                                            return (<>
+                                                <div onClick={() => { addFournisseur(elem.id, elem.raison_sociale) }} className="d-flex align-items-center my-1 mx-2 rechercheListe w-100">
+                                                    <div className='mx-2'><b>{elem.id}</b> - {elem.raison_sociale}</div>
+                                                </div></>)
+                                        })}
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </form>
+                    <form className="form-floating w-25">
+                    </form>
                 </div>
+
+
             </div>
+
         </div>
         {disableGamme ? "" : <>
             <div className="d-flex flex-column align-items-center w-100" style={{ width: "85%", paddingTop: "50px" }}>
