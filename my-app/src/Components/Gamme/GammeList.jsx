@@ -24,7 +24,7 @@ function GammeList(props) {
     useEffect(() => {
         if (localStorage.getItem("Toast") === "success") {
             localStorage.setItem("Toast", "")
-            setInfoToast("Gamme créé avec succès")
+            setInfoToast("Gamme créée avec succès")
             setStatutToast('success')
             new Toast(document.querySelector('.toast')).show()
         }

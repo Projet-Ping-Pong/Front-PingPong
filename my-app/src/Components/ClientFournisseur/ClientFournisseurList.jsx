@@ -39,13 +39,13 @@ function ClientFournisseurList(props) {
         }
         if (localStorage.getItem("Toast") === "successUpdateClient") {
             localStorage.setItem("Toast", "")
-            setInfoToast("Client modifiée avec succès")
+            setInfoToast("Client modifié avec succès")
             setStatutToast('success')
             new Toast(document.querySelector('.toast')).show()
         }
         if (localStorage.getItem("Toast") === "successUpdateFournisseur") {
             localStorage.setItem("Toast", "")
-            setInfoToast("Fournisseur modifiée avec succès")
+            setInfoToast("Fournisseur modifié avec succès")
             setStatutToast('success')
             new Toast(document.querySelector('.toast')).show()
         }

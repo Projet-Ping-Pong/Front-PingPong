@@ -115,12 +115,12 @@ function CommandeVente(props) {
                     new Toast(document.querySelector('.toast')).show()
                 }
             } else {
-                setInfoToast("Vous n'avez pas renseigner la date")
+                setInfoToast("Vous n'avez pas renseigné la date")
                 setStatutToast('error')
                 new Toast(document.querySelector('.toast')).show()
             }
         } else {
-            setInfoToast("Vous n'avez pas renseigner le libellé")
+            setInfoToast("Vous n'avez pas renseigné le libellé")
             setStatutToast('error')
             new Toast(document.querySelector('.toast')).show()
         }

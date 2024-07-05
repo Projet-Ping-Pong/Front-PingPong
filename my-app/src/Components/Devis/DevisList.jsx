@@ -32,7 +32,7 @@ function DevisList(props) {
         }
         if (localStorage.getItem("Toast") === "successUpdate") {
             localStorage.setItem("Toast", "")
-            setInfoToast("Devis modifiée avec succès")
+            setInfoToast("Devis modifié avec succès")
             setStatutToast('success')
             new Toast(document.querySelector('.toast')).show()
         }

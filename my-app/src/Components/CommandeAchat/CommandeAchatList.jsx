@@ -28,7 +28,7 @@ function CommandeAchatList(props) {
 
         if (localStorage.getItem("Toast") === "success") {
             localStorage.setItem("Toast", "")
-            setInfoToast("Commande créé avec succès")
+            setInfoToast("Commande créée avec succès")
             setStatutToast('success')
             new Toast(document.querySelector('.toast')).show()
         }
